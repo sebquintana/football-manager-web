@@ -95,9 +95,8 @@ export default function TeamsPage() {
             <div key={i} style={{
               background: '#f9fafb', borderRadius: 8, padding: 12, marginBottom: 12, boxShadow: '0 1px 3px #e5e7eb'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontWeight: 600, color: '#16a34a' }}>Equipo A ({t.eloA})</span>
-                <span style={{ fontWeight: 600, color: '#dc2626' }}>Equipo B ({t.eloB})</span>
+              <div style={{ fontWeight: 600, color: '#0f172a', marginBottom: 4, fontSize: 16 }}>
+                Opción {i + 1}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
                 <ul style={{ margin: 0, padding: 0, listStyle: 'none', flex: 1 }}>
