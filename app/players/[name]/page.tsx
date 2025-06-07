@@ -12,6 +12,19 @@ interface HistoryEntry {
   teamBPlayers: string[];
 }
 
+interface MateSynergy {
+  mate: string;
+  victories: number;
+  matches: number;
+  winRate: number;
+}
+
+interface Synergies {
+  bestMate: string | null;
+  worstMate: string | null;
+  mates: MateSynergy[];
+}
+
 interface Player {
   id: string;
   name: string;
@@ -24,14 +37,9 @@ interface Player {
   goalsFor: number;
   goalsAgainst: number;
   history: HistoryEntry[];
+  synergies?: Synergies;
 }
 
-interface SynergyStat {
-  name: string;
-  wins: number;
-  total: number;
-  winRate: number;
-}
 
 export default function PlayerDetailPage() {
   const { name } = useParams<{ name: string }>();
@@ -40,7 +48,7 @@ export default function PlayerDetailPage() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [synergies, setSynergies] = useState<SynergyStat[]>([]);
+  const [synergies, setSynergies] = useState<MateSynergy[]>([]);
   const [bestMate, setBestMate] = useState<string | null>(null);
   const [worstMate, setWorstMate] = useState<string | null>(null);
 
@@ -51,6 +59,15 @@ export default function PlayerDetailPage() {
         if (!res.ok) throw new Error('request failed');
         const data: Player = await res.json();
         setPlayer(data);
+        if (data.synergies) {
+          setSynergies(data.synergies.mates);
+          setBestMate(data.synergies.bestMate);
+          setWorstMate(data.synergies.worstMate);
+        } else {
+          setSynergies([]);
+          setBestMate(null);
+          setWorstMate(null);
+        }
       } catch (err) {
         setError('No se pudo obtener la información del jugador.');
       } finally {
@@ -60,37 +77,6 @@ export default function PlayerDetailPage() {
 
     fetchPlayer();
   }, [name]);
-
-  useEffect(() => {
-    if (!player) return;
-    const map: Record<string, { wins: number; total: number }> = {};
-    for (const h of player.history) {
-      const inTeamA = h.teamAPlayers.includes(player.name);
-      const teammates = inTeamA ? h.teamAPlayers : h.teamBPlayers;
-      const won = h.newElo - h.oldElo > 0;
-      for (const mate of teammates) {
-        if (mate === player.name) continue;
-        if (!map[mate]) map[mate] = { wins: 0, total: 0 };
-        map[mate].total += 1;
-        if (won) map[mate].wins += 1;
-      }
-    }
-    const arr = Object.entries(map).map(([name, val]) => ({
-      name,
-      wins: val.wins,
-      total: val.total,
-      winRate: val.wins / val.total,
-    }));
-    if (arr.length > 0) {
-      const sorted = [...arr].sort((a, b) => b.winRate - a.winRate);
-      setBestMate(sorted[0].name);
-      setWorstMate(sorted[sorted.length - 1].name);
-    } else {
-      setBestMate(null);
-      setWorstMate(null);
-    }
-    setSynergies(arr);
-  }, [player]);
 
   return (
     <main
@@ -176,18 +162,18 @@ export default function PlayerDetailPage() {
                 </thead>
                 <tbody>
                   {synergies.map((s) => (
-                    <tr key={s.name}>
-                      <td style={{ padding: '2px 0' }}>{s.name}</td>
-                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.wins}</td>
-                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.total}</td>
+                    <tr key={s.mate}>
+                      <td style={{ padding: '2px 0' }}>{s.mate}</td>
+                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.victories}</td>
+                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.matches}</td>
                       <td
                         style={{
                           textAlign: 'right',
                           padding: '2px 0',
-                          background: `rgb(${Math.round(255 * (1 - s.winRate))},${Math.round(255 * s.winRate)},150)`,
+                          background: `rgb(${Math.round(255 * (1 - s.winRate / 100))},${Math.round(255 * (s.winRate / 100))},150)`,
                         }}
                       >
-                        {(s.winRate * 100).toFixed(0)}%
+                        {s.winRate.toFixed(0)}%
                       </td>
                     </tr>
                   ))}
