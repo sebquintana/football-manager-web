@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 
 export default function TeamsPage() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const [players, setPlayers] = useState([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +13,7 @@ export default function TeamsPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3000/players')
+    fetch(`${apiUrl}/players`)
       .then(res => res.json())
       .then(data => {
         setPlayers(data);
@@ -33,7 +34,7 @@ export default function TeamsPage() {
     setError(null);
     setTeams([]);
     try {
-      const res = await fetch('http://localhost:3000/teams/balanced', {
+      const res = await fetch(`${apiUrl}/teams/balanced`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ playerNames: selected })
