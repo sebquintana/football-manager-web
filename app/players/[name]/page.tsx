@@ -12,6 +12,19 @@ interface HistoryEntry {
   teamBPlayers: string[];
 }
 
+interface MateSynergy {
+  mate: string;
+  victories: number;
+  matches: number;
+  winRate: number;
+}
+
+interface Synergies {
+  bestMate: string | null;
+  worstMate: string | null;
+  mates: MateSynergy[];
+}
+
 interface Player {
   id: string;
   name: string;
@@ -24,7 +37,9 @@ interface Player {
   goalsFor: number;
   goalsAgainst: number;
   history: HistoryEntry[];
+  synergies?: Synergies;
 }
+
 
 export default function PlayerDetailPage() {
   const { name } = useParams<{ name: string }>();
@@ -33,6 +48,9 @@ export default function PlayerDetailPage() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [synergies, setSynergies] = useState<MateSynergy[]>([]);
+  const [bestMate, setBestMate] = useState<string | null>(null);
+  const [worstMate, setWorstMate] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPlayer = async () => {
@@ -41,6 +59,15 @@ export default function PlayerDetailPage() {
         if (!res.ok) throw new Error('request failed');
         const data: Player = await res.json();
         setPlayer(data);
+        if (data.synergies) {
+          setSynergies(data.synergies.mates);
+          setBestMate(data.synergies.bestMate);
+          setWorstMate(data.synergies.worstMate);
+        } else {
+          setSynergies([]);
+          setBestMate(null);
+          setWorstMate(null);
+        }
       } catch (err) {
         setError('No se pudo obtener la información del jugador.');
       } finally {
@@ -103,6 +130,59 @@ export default function PlayerDetailPage() {
               <b>Goles en contra:</b> {player.goalsAgainst}
             </li>
           </ul>
+          <h2
+            style={{
+              fontWeight: 700,
+              marginTop: 24,
+              marginBottom: 12,
+              color: '#0f172a',
+              fontSize: '1.25rem',
+            }}
+          >
+            Sinergias
+          </h2>
+          {synergies.length > 0 ? (
+            <>
+              <p style={{ margin: '4px 0 12px' }}>
+                <b>Mejor compañero:</b> {bestMate}
+                {worstMate && (
+                  <>
+                    {' | '}<b>Peor compañero:</b> {worstMate}
+                  </>
+                )}
+              </p>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: 'left', paddingBottom: 4 }}>Compañero</th>
+                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Victorias</th>
+                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Partidos</th>
+                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>% Victoria</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {synergies.map((s) => (
+                    <tr key={s.mate}>
+                      <td style={{ padding: '2px 0' }}>{s.mate}</td>
+                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.victories}</td>
+                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.matches}</td>
+                      <td
+                        style={{
+                          textAlign: 'right',
+                          padding: '2px 0',
+                          background: `rgb(${Math.round(255 * (1 - s.winRate / 100))},${Math.round(255 * (s.winRate / 100))},150)`,
+                        }}
+                      >
+                        {s.winRate.toFixed(0)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : (
+            <p style={{ color: '#64748b' }}>Aún no se registran sinergias.</p>
+          )}
           <h2
             style={{
               fontWeight: 700,
