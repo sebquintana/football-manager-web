@@ -26,6 +26,13 @@ interface Player {
   history: HistoryEntry[];
 }
 
+interface SynergyStat {
+  name: string;
+  wins: number;
+  total: number;
+  winRate: number;
+}
+
 export default function PlayerDetailPage() {
   const { name } = useParams<{ name: string }>();
   const playerName = decodeURIComponent(name);
@@ -33,6 +40,9 @@ export default function PlayerDetailPage() {
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [synergies, setSynergies] = useState<SynergyStat[]>([]);
+  const [bestMate, setBestMate] = useState<string | null>(null);
+  const [worstMate, setWorstMate] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPlayer = async () => {
@@ -50,6 +60,37 @@ export default function PlayerDetailPage() {
 
     fetchPlayer();
   }, [name]);
+
+  useEffect(() => {
+    if (!player) return;
+    const map: Record<string, { wins: number; total: number }> = {};
+    for (const h of player.history) {
+      const inTeamA = h.teamAPlayers.includes(player.name);
+      const teammates = inTeamA ? h.teamAPlayers : h.teamBPlayers;
+      const won = h.newElo - h.oldElo > 0;
+      for (const mate of teammates) {
+        if (mate === player.name) continue;
+        if (!map[mate]) map[mate] = { wins: 0, total: 0 };
+        map[mate].total += 1;
+        if (won) map[mate].wins += 1;
+      }
+    }
+    const arr = Object.entries(map).map(([name, val]) => ({
+      name,
+      wins: val.wins,
+      total: val.total,
+      winRate: val.wins / val.total,
+    }));
+    if (arr.length > 0) {
+      const sorted = [...arr].sort((a, b) => b.winRate - a.winRate);
+      setBestMate(sorted[0].name);
+      setWorstMate(sorted[sorted.length - 1].name);
+    } else {
+      setBestMate(null);
+      setWorstMate(null);
+    }
+    setSynergies(arr);
+  }, [player]);
 
   return (
     <main
@@ -103,6 +144,59 @@ export default function PlayerDetailPage() {
               <b>Goles en contra:</b> {player.goalsAgainst}
             </li>
           </ul>
+          <h2
+            style={{
+              fontWeight: 700,
+              marginTop: 24,
+              marginBottom: 12,
+              color: '#0f172a',
+              fontSize: '1.25rem',
+            }}
+          >
+            Sinergias
+          </h2>
+          {synergies.length > 0 ? (
+            <>
+              <p style={{ margin: '4px 0 12px' }}>
+                <b>Mejor compañero:</b> {bestMate}
+                {worstMate && (
+                  <>
+                    {' | '}<b>Peor compañero:</b> {worstMate}
+                  </>
+                )}
+              </p>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: 'left', paddingBottom: 4 }}>Compañero</th>
+                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Victorias</th>
+                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Partidos</th>
+                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>% Victoria</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {synergies.map((s) => (
+                    <tr key={s.name}>
+                      <td style={{ padding: '2px 0' }}>{s.name}</td>
+                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.wins}</td>
+                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.total}</td>
+                      <td
+                        style={{
+                          textAlign: 'right',
+                          padding: '2px 0',
+                          background: `rgb(${Math.round(255 * (1 - s.winRate))},${Math.round(255 * s.winRate)},150)`,
+                        }}
+                      >
+                        {(s.winRate * 100).toFixed(0)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          ) : (
+            <p style={{ color: '#64748b' }}>Aún no se registran sinergias.</p>
+          )}
           <h2
             style={{
               fontWeight: 700,
