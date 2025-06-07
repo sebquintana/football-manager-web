@@ -63,7 +63,7 @@ export default function PlayersPage() {
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {players.map((p) => (
             <li key={p.id} style={{ padding: '4px 0' }}>
-              <a href={`/players/${encodeURIComponent(p.name)}`}>{p.name}</a>
+              <a href={`/players/${p.name}`}>{p.name}</a>
             </li>
           ))}
         </ul>

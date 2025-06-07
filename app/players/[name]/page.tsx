@@ -28,6 +28,7 @@ interface Player {
 
 export default function PlayerDetailPage() {
   const { name } = useParams<{ name: string }>();
+  const playerName = decodeURIComponent(name);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,7 +37,7 @@ export default function PlayerDetailPage() {
   useEffect(() => {
     const fetchPlayer = async () => {
       try {
-        const res = await fetch(`${apiUrl}/players/${encodeURIComponent(name)}`);
+        const res = await fetch(`${apiUrl}/players/${encodeURIComponent(playerName)}`);
         if (!res.ok) throw new Error('request failed');
         const data: Player = await res.json();
         setPlayer(data);
