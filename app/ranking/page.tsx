@@ -14,8 +14,9 @@ export default function RankingPage() {
 
   useEffect(() => {
     const fetchRanking = async () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/players/ranking`);
+        const res = await fetch(`${apiUrl}/players/ranking`);
         const data = await res.json();
         setPlayers(data);
       } catch (err) {
