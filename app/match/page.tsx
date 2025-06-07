@@ -10,8 +10,8 @@ interface Player {
 export default function MatchPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const [players, setPlayers] = useState<Player[]>([]);
-  const [teamA, setTeamA] = useState<string[]>([]);
-  const [teamB, setTeamB] = useState<string[]>([]);
+  const [teamA, setTeamA] = useState<string[]>(Array(5).fill(""));
+  const [teamB, setTeamB] = useState<string[]>(Array(5).fill(""));
   const [winner, setWinner] = useState<'A' | 'B'>('A');
   const [goalDiff, setGoalDiff] = useState<number>(0);
   const [date, setDate] = useState<string>('');
@@ -29,6 +29,10 @@ export default function MatchPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (teamA.some(n => !n) || teamB.some(n => !n)) {
+      setMessage('Selecciona 5 jugadores por equipo');
+      return;
+    }
     setSubmitting(true);
     setMessage(null);
     try {
@@ -45,8 +49,8 @@ export default function MatchPage() {
       });
       if (!res.ok) throw new Error('Request failed');
       setMessage('Partido cargado exitosamente');
-      setTeamA([]);
-      setTeamB([]);
+      setTeamA(Array(5).fill(""));
+      setTeamB(Array(5).fill(""));
       setGoalDiff(0);
       setDate('');
     } catch (err) {
@@ -57,11 +61,20 @@ export default function MatchPage() {
     }
   };
 
-  const handleSelect = (setter: (names: string[]) => void) => (
-    e: React.ChangeEvent<HTMLSelectElement>
+  const updateTeam = (
+    team: 'A' | 'B',
+    index: number,
+    value: string
   ) => {
-    const options = Array.from(e.target.selectedOptions).map(opt => opt.value);
-    setter(options);
+    if (team === 'A') {
+      const copy = [...teamA];
+      copy[index] = value;
+      setTeamA(copy);
+    } else {
+      const copy = [...teamB];
+      copy[index] = value;
+      setTeamB(copy);
+    }
   };
 
   return (
@@ -88,23 +101,53 @@ export default function MatchPage() {
           <div style={{ display: 'flex', gap: 16 }}>
             <div style={{ flex: 1 }}>
               <label style={{ fontWeight: 600 }}>Equipo A</label>
-              <select multiple value={teamA} onChange={handleSelect(setTeamA)} style={{ width: '100%', minHeight: 120 }}>
-                {players.map(p => (
-                  <option key={p.id} value={p.name} disabled={teamB.includes(p.name)}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <select
+                  key={i}
+                  value={teamA[i]}
+                  onChange={e => updateTeam('A', i, e.target.value)}
+                  style={{ width: '100%', marginBottom: 8 }}
+                >
+                  <option value="">Seleccionar jugador</option>
+                  {players.map(p => (
+                    <option
+                      key={p.id}
+                      value={p.name}
+                      disabled={
+                        (teamA.includes(p.name) && teamA[i] !== p.name) ||
+                        teamB.includes(p.name)
+                      }
+                    >
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              ))}
             </div>
             <div style={{ flex: 1 }}>
               <label style={{ fontWeight: 600 }}>Equipo B</label>
-              <select multiple value={teamB} onChange={handleSelect(setTeamB)} style={{ width: '100%', minHeight: 120 }}>
-                {players.map(p => (
-                  <option key={p.id} value={p.name} disabled={teamA.includes(p.name)}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <select
+                  key={i}
+                  value={teamB[i]}
+                  onChange={e => updateTeam('B', i, e.target.value)}
+                  style={{ width: '100%', marginBottom: 8 }}
+                >
+                  <option value="">Seleccionar jugador</option>
+                  {players.map(p => (
+                    <option
+                      key={p.id}
+                      value={p.name}
+                      disabled={
+                        (teamB.includes(p.name) && teamB[i] !== p.name) ||
+                        teamA.includes(p.name)
+                      }
+                    >
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              ))}
             </div>
           </div>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
