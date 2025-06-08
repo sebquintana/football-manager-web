@@ -1,0 +1,29 @@
+.navbar-header {
+  background: #2563eb; /* Azul claro */
+  padding: 16px 0;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.navbar-nav {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  align-items: center;
+}
+
+.navbar-link {
+  color: #e0e7ff; /* Azul muy claro */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.navbar-link:hover,
+.navbar-link:focus {
+  background: #19458b; /* Azul un poco más intenso */
+  color: #fff;
+}

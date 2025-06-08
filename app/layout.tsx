@@ -1,44 +1,38 @@
+import Link from "next/link";
 import "./globals.css";
 import { ReactNode } from "react";
+import "./styles/navbar.css";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="es">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="bg-gray-50 min-h-screen">
-        <header
-          style={{
-            background: "#1f2937",
-            padding: "12px 16px",
-            marginBottom: 24,
-          }}
-        >
-          <nav
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: 16,
-              color: "white",
-              fontWeight: 600,
-            }}
-          >
-            <a href="/" style={{ color: "inherit" }}>
+        <header className="navbar-header">
+          <nav className="navbar-nav">
+            <Link href="/" className="navbar-link">
               Inicio
-            </a>
-            <a href="/ranking" style={{ color: "inherit" }}>
+            </Link>
+            <Link href="/ranking" className="navbar-link">
               Ranking
-            </a>
-            <a href="/players" style={{ color: "inherit" }}>
+            </Link>
+            <Link href="/players" className="navbar-link">
               Jugadores
-            </a>
-            <a href="/teams" style={{ color: "inherit" }}>
+            </Link>
+            <Link href="/teams" className="navbar-link">
               Equipos
-            </a>
-            <a href="/matches" style={{ color: "inherit" }}>
+            </Link>
+            <Link href="/matches" className="navbar-link">
               Partidos
-            </a>
-            <a href="/match" style={{ color: "inherit" }}>
+            </Link>
+            <Link href="/match" className="navbar-link">
               Cargar Resultado
-            </a>
+            </Link>
           </nav>
         </header>
         {children}
