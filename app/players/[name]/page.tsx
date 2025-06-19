@@ -38,8 +38,14 @@ interface Player {
   goalsAgainst: number;
   history: HistoryEntry[];
   synergies?: Synergies;
+  streaks?: {
+    currentType: 'win' | 'loss' | 'draw';
+    currentCount: number;
+    maxWinStreak: number;
+    maxLossStreak: number;
+  };
+  attendanceRate?: number | null;
 }
-
 
 export default function PlayerDetailPage() {
   const { name } = useParams<{ name: string }>();
@@ -77,6 +83,25 @@ export default function PlayerDetailPage() {
 
     fetchPlayer();
   }, [name]);
+
+  let streakLabel = '';
+  let streakEmoji = '';
+  let streakColor = '';
+  if (player?.streaks) {
+    if (player.streaks.currentType === 'win') {
+      streakLabel = 'Victorias';
+      streakEmoji = '🟢';
+      streakColor = '#16a34a';
+    } else if (player.streaks.currentType === 'loss') {
+      streakLabel = 'Derrotas';
+      streakEmoji = '🔴';
+      streakColor = '#dc2626';
+    } else {
+      streakLabel = 'Empates';
+      streakEmoji = '🟡';
+      streakColor = '#eab308';
+    }
+  }
 
   return (
     <main
@@ -129,6 +154,22 @@ export default function PlayerDetailPage() {
             <li>
               <b>Goles en contra:</b> {player.goalsAgainst}
             </li>
+            <li>
+              <b>Asistencia:</b> {player.attendanceRate != null ? player.attendanceRate + '%' : '-'}
+            </li>
+            {player.streaks && (
+              <>
+                <li>
+                  <b>Racha actual:</b> <span style={{ color: streakColor, fontWeight: 600 }}>{streakEmoji} {player.streaks.currentCount} {streakLabel}</span>
+                </li>
+                <li>
+                  <b>Mejor racha de victorias:</b> {player.streaks.maxWinStreak}
+                </li>
+                <li>
+                  <b>Mejor racha de derrotas:</b> {player.streaks.maxLossStreak}
+                </li>
+              </>
+            )}
           </ul>
           <h2
             style={{
@@ -156,7 +197,7 @@ export default function PlayerDetailPage() {
                   <tr>
                     <th style={{ textAlign: 'left', paddingBottom: 4 }}>Compañero</th>
                     <th style={{ textAlign: 'right', paddingBottom: 4 }}>Victorias</th>
-                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Partidos</th>
+                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Derrotas</th>
                     <th style={{ textAlign: 'right', paddingBottom: 4 }}>% Victoria</th>
                   </tr>
                 </thead>
@@ -165,7 +206,7 @@ export default function PlayerDetailPage() {
                     <tr key={s.mate}>
                       <td style={{ padding: '2px 0' }}>{s.mate}</td>
                       <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.victories}</td>
-                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.matches}</td>
+                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.matches - s.victories}</td>
                       <td
                         style={{
                           textAlign: 'right',
