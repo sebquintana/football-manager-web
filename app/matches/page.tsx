@@ -38,19 +38,7 @@ export default function MatchesPage() {
   }, []);
 
   return (
-    <main
-      style={{
-        maxWidth: 480,
-        margin: "48px auto",
-        padding: 24,
-        background: "white",
-        borderRadius: 12,
-        boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-        display: "flex",
-        flexDirection: "column",
-        minHeight: 400,
-      }}
-    >
+    <main className="card">
       <h1
         style={{
           fontSize: "2rem",

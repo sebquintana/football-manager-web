@@ -50,18 +50,7 @@ export default function TeamsPage() {
   };
 
   return (
-    <main style={{
-      maxWidth: 480,
-      margin: '48px auto',
-      padding: 24,
-      background: 'white',
-      borderRadius: 12,
-      boxShadow: '0 2px 16px 0 rgba(0,0,0,0.08)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      minHeight: 400
-    }}>
+    <main className="card" style={{ alignItems: 'center' }}>
       <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: 24, textAlign: 'center', color: '#16a34a' }}>⚽ Generar Equipos Balanceados</h1>
       {loading ? <p>Cargando jugadores...</p> : (
         <form onSubmit={handleSubmit} style={{ width: '100%', marginBottom: 24 }}>

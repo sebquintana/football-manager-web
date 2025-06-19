@@ -79,17 +79,7 @@ export default function PlayerDetailPage() {
   }, [name]);
 
   return (
-    <main
-      style={{
-        maxWidth: 480,
-        margin: '48px auto',
-        padding: 24,
-        background: 'white',
-        borderRadius: 12,
-        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-        minHeight: 400,
-      }}
-    >
+    <main className="card">
       {loading ? (
         <p style={{ textAlign: 'center', color: '#64748b' }}>Cargando...</p>
       ) : error ? (
