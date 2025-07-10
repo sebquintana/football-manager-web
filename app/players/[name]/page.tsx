@@ -166,7 +166,7 @@ export default function PlayerDetailPage() {
                   <b>Mejor racha de victorias:</b> {player.streaks.maxWinStreak}
                 </li>
                 <li>
-                  <b>Mejor racha de derrotas:</b> {player.streaks.maxLossStreak}
+                  <b>Peor racha de derrotas:</b> {player.streaks.maxLossStreak}
                 </li>
               </>
             )}
