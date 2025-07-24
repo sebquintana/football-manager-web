@@ -154,7 +154,8 @@ export default function MatchPage() {
             Ganador
             <select value={winner} onChange={e => setWinner(e.target.value as 'A' | 'B')}>
               <option value="A">Equipo A</option>
-              <option value="B">Equipo B</option>
+                <option value="B">Equipo B</option>
+                <option value="draw">Empate</option>
             </select>
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
