@@ -107,9 +107,8 @@ export default function PlayerDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
-      <div className="max-w-4xl mx-auto">
-        {loading ? (
+    <div className="max-w-4xl mx-auto bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 -m-4 p-4 min-h-screen">
+      {loading ? (
           <div className="text-center py-8">
             <div className="text-white/70">Cargando...</div>
           </div>
@@ -354,7 +353,6 @@ export default function PlayerDetailPage() {
             </div>
           </>
         ) : null}
-      </div>
     </div>
   );
 }
