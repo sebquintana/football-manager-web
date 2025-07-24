@@ -2,6 +2,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function TeamsPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -43,6 +55,7 @@ export default function TeamsPage() {
       const data = await res.json();
       setTeams(data);
     } catch (err) {
+      console.error('Error generating teams:', err);
       setError('No se pudieron generar los equipos.');
     } finally {
       setSubmitting(false);
@@ -50,116 +63,154 @@ export default function TeamsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header Card */}
-        <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-8 mb-6 shadow-2xl">
-          <div className="flex items-center justify-center gap-3">
-            <div className="text-4xl">⚽</div>
-            <h1 className="text-4xl font-bold text-white">
-              Generar Equipos Balanceados
-            </h1>
-          </div>
+    <div className="flex flex-col h-full -m-4">
+      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/80 border-b border-white/10 shadow-lg">
+        <div className="flex items-center gap-2 px-4 flex-1">
+          <SidebarTrigger className="-ml-1 text-white" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 h-4 bg-white/20"
+          />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="/" className="text-white/70">
+                  Football Manager
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block text-white/50" />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-white">
+                  Equipos
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
+        <div className="flex items-center gap-2 px-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10"
+          >
+            <Bell className="h-4 w-4" />
+          </Button>
+        </div>
+      </header>
 
-        {/* Players Selection */}
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10 mb-6">
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="text-white/70">Cargando jugadores...</div>
+      <main className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-auto">
+        <div className="p-6">
+          <div className="max-w-2xl mx-auto">
+            {/* Header Card */}
+            <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-8 mb-6 shadow-2xl">
+              <div className="flex items-center justify-center gap-3">
+                <div className="text-4xl">⚽</div>
+                <h1 className="text-4xl font-bold text-white">
+                  Generar Equipos Balanceados
+                </h1>
+              </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <h2 className="text-xl font-semibold text-white mb-4">Seleccionar Jugadores</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {players.map((p: any) => (
-                    <label
-                      key={p.id}
-                      className={`
-                        flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 border
-                        ${selected.includes(p.name) 
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300' 
-                          : 'bg-slate-700/40 border-slate-600/30 text-white/80 hover:bg-slate-600/40 hover:border-slate-500/50'
-                        }
-                      `}
+
+            {/* Players Selection */}
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10 mb-6">
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="text-white/70">Cargando jugadores...</div>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <h2 className="text-xl font-semibold text-white mb-4">Seleccionar Jugadores</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {players.map((p: any) => (
+                        <label
+                          key={p.id}
+                          className={`
+                            flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 border
+                            ${selected.includes(p.name) 
+                              ? 'bg-green-500/20 border-green-500/50 text-green-300' 
+                              : 'bg-slate-700/40 border-slate-600/30 text-white/80 hover:bg-slate-600/40 hover:border-slate-500/50'
+                            }
+                          `}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selected.includes(p.name)}
+                            onChange={() => handleSelect(p.name)}
+                            className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                          />
+                          <span className="font-medium">{p.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <button
+                    type="submit"
+                    disabled={selected.length < 2 || submitting}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+                  >
+                    {submitting ? 'Generando...' : `Generar Equipos (${selected.length} jugadores)`}
+                  </button>
+                </form>
+              )}
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 rounded-2xl p-4 mb-6">
+                <p className="text-red-300 text-center">{error}</p>
+              </div>
+            )}
+
+            {/* Results */}
+            {teams.length > 0 && (
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+                <h2 className="text-2xl font-bold text-white mb-6 text-center">Opciones de Equipos</h2>
+                <div className="space-y-4">
+                  {teams.map((t, i) => (
+                    <div
+                      key={`team-option-${i}-${t.difference}`}
+                      className="bg-slate-700/40 border border-slate-600/30 rounded-xl p-6 backdrop-blur-sm"
                     >
-                      <input
-                        type="checkbox"
-                        checked={selected.includes(p.name)}
-                        onChange={() => handleSelect(p.name)}
-                        className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                      />
-                      <span className="font-medium">{p.name}</span>
-                    </label>
+                      <div className="text-center mb-4">
+                        <h3 className="text-lg font-bold text-blue-400">Opción {i + 1}</h3>
+                        <p className="text-sm text-white/60">Diferencia de ELO: <span className="text-white font-mono">{t.difference}</span></p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Team A */}
+                        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                          <h4 className="text-center font-bold text-green-400 mb-3">Equipo A</h4>
+                          <ul className="space-y-2">
+                            {t.teamA.map((name: string) => (
+                              <li key={name} className="text-white/90 text-center py-1 px-2 bg-green-500/20 rounded">
+                                {name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        
+                        {/* Team B */}
+                        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                          <h4 className="text-center font-bold text-blue-400 mb-3">Equipo B</h4>
+                          <ul className="space-y-2">
+                            {t.teamB.map((name: string) => (
+                              <li key={name} className="text-white/90 text-center py-1 px-2 bg-blue-500/20 rounded">
+                                {name}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               </div>
-              
-              <button
-                type="submit"
-                disabled={selected.length < 2 || submitting}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
-              >
-                {submitting ? 'Generando...' : `Generar Equipos (${selected.length} jugadores)`}
-              </button>
-            </form>
-          )}
+            )}
+          </div>
         </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-500/20 border border-red-500/50 rounded-2xl p-4 mb-6">
-            <p className="text-red-300 text-center">{error}</p>
-          </div>
-        )}
-
-        {/* Results */}
-        {teams.length > 0 && (
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
-            <h2 className="text-2xl font-bold text-white mb-6 text-center">Opciones de Equipos</h2>
-            <div className="space-y-4">
-              {teams.map((t, i) => (
-                <div
-                  key={i}
-                  className="bg-slate-700/40 border border-slate-600/30 rounded-xl p-6 backdrop-blur-sm"
-                >
-                  <div className="text-center mb-4">
-                    <h3 className="text-lg font-bold text-blue-400">Opción {i + 1}</h3>
-                    <p className="text-sm text-white/60">Diferencia de ELO: <span className="text-white font-mono">{t.difference}</span></p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Team A */}
-                    <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-                      <h4 className="text-center font-bold text-green-400 mb-3">Equipo A</h4>
-                      <ul className="space-y-2">
-                        {t.teamA.map((name: string) => (
-                          <li key={name} className="text-white/90 text-center py-1 px-2 bg-green-500/20 rounded">
-                            {name}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    {/* Team B */}
-                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                      <h4 className="text-center font-bold text-blue-400 mb-3">Equipo B</h4>
-                      <ul className="space-y-2">
-                        {t.teamB.map((name: string) => (
-                          <li key={name} className="text-white/90 text-center py-1 px-2 bg-blue-500/20 rounded">
-                            {name}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
+      </main>
     </div>
   );
 }

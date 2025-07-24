@@ -2,6 +2,18 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface HistoryEntry {
   oldElo: number;
@@ -85,7 +97,7 @@ export default function PlayerDetailPage() {
     };
 
     fetchPlayer();
-  }, [name]);
+  }, [apiUrl, playerName]);
 
   let streakLabel = '';
   let streakEmoji = '';
@@ -107,16 +119,59 @@ export default function PlayerDetailPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 -m-4 p-4 min-h-screen">
-      {loading ? (
-          <div className="text-center py-8">
-            <div className="text-white/70">Cargando...</div>
-          </div>
-        ) : error ? (
-          <div className="text-center py-8">
-            <div className="text-red-400">{error}</div>
-          </div>
-        ) : player ? (
+    <div className="flex flex-col h-full -m-4">
+      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/80 border-b border-white/10 shadow-lg">
+        <div className="flex items-center gap-2 px-4 flex-1">
+          <SidebarTrigger className="-ml-1 text-white" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 h-4 bg-white/20"
+          />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="/" className="text-white/70">
+                  Football Manager
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block text-white/50" />
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="/players" className="text-white/70">
+                  Jugadores
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block text-white/50" />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-white">
+                  {player?.name || 'Jugador'}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+        <div className="flex items-center gap-2 px-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10"
+          >
+            <Bell className="h-4 w-4" />
+          </Button>
+        </div>
+      </header>
+
+      <main className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-auto">
+        <div className="p-6">
+          <div className="max-w-4xl mx-auto">
+            {loading ? (
+              <div className="text-center py-8">
+                <div className="text-white/70">Cargando...</div>
+              </div>
+            ) : error ? (
+              <div className="text-center py-8">
+                <div className="text-red-400">{error}</div>
+              </div>
+            ) : player ? (
           <>
             {/* Header Card */}
             <div className="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-2xl p-8 mb-6 shadow-2xl">
@@ -353,6 +408,9 @@ export default function PlayerDetailPage() {
             </div>
           </>
         ) : null}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

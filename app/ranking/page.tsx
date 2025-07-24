@@ -12,9 +12,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Bell, Search } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 type Player = {
   name: string;
@@ -68,13 +67,6 @@ export default function RankingPage() {
           </Breadcrumb>
         </div>
         <div className="flex items-center gap-2 px-4">
-          <div className="relative hidden md:block">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar jugador..."
-              className="pl-8 w-64 bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
           <Button
             variant="ghost"
             size="icon"

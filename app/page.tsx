@@ -1,4 +1,3 @@
-import { FootballDashboard } from "@/components/football-dashboard";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -9,9 +8,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Bell, Search } from "lucide-react";
+import { Bell, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export default function Page() {
   return (
@@ -40,13 +38,6 @@ export default function Page() {
           </Breadcrumb>
         </div>
         <div className="flex items-center gap-2 px-4">
-          <div className="relative hidden md:block">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar..."
-              className="pl-8 w-64 bg-white/10 border-white/20 text-white placeholder:text-white/50"
-            />
-          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -57,10 +48,23 @@ export default function Page() {
         </div>
       </header>
 
-      <main className="flex-1 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-auto">
+      <main className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-auto">
         <div className="p-6">
-          <div className="max-w-7xl mx-auto">
-            <FootballDashboard />
+          <div className="max-w-2xl mx-auto">
+            {/* Main Season Card */}
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-12 text-center shadow-2xl">
+              <div className="flex justify-center mb-6">
+                <div className="bg-gradient-to-br from-yellow-400 to-yellow-600 p-6 rounded-full shadow-lg">
+                  <Trophy className="h-16 w-16 text-white" />
+                </div>
+              </div>
+              <h1 className="text-6xl font-bold text-white mb-4 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                Temporada 2025
+              </h1>
+              <p className="text-xl text-white/70 font-medium">
+                ¡Bienvenido a la nueva temporada de Football Manager!
+              </p>
+            </div>
           </div>
         </div>
       </main>

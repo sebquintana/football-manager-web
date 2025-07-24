@@ -1,6 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Match {
   id: string;
@@ -38,17 +50,53 @@ export default function MatchesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
-      <div className="max-w-3xl mx-auto">
-        {/* Header Card */}
-        <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 mb-6 shadow-2xl">
-          <div className="flex items-center justify-center gap-3">
-            <div className="text-4xl">🏟️</div>
-            <h1 className="text-4xl font-bold text-white">
-              Partidos Jugados
-            </h1>
-          </div>
+    <div className="flex flex-col h-full -m-4">
+      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/80 border-b border-white/10 shadow-lg">
+        <div className="flex items-center gap-2 px-4 flex-1">
+          <SidebarTrigger className="-ml-1 text-white" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 h-4 bg-white/20"
+          />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="/" className="text-white/70">
+                  Football Manager
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block text-white/50" />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-white">
+                  Partidos
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
+        <div className="flex items-center gap-2 px-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10"
+          >
+            <Bell className="h-4 w-4" />
+          </Button>
+        </div>
+      </header>
+
+      <main className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-auto">
+        <div className="p-6">
+          <div className="max-w-3xl mx-auto">
+            {/* Header Card */}
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-8 mb-6 shadow-2xl">
+              <div className="flex items-center justify-center gap-3">
+                <div className="text-4xl">🏟️</div>
+                <h1 className="text-4xl font-bold text-white">
+                  Partidos Jugados
+                </h1>
+              </div>
+            </div>
 
         {/* Matches List */}
         <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
@@ -178,7 +226,9 @@ export default function MatchesPage() {
             </div>
           )}
         </div>
-      </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
