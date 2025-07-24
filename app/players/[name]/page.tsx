@@ -15,6 +15,8 @@ interface HistoryEntry {
 interface MateSynergy {
   mate: string;
   victories: number;
+  losses: number;
+  draws: number;
   matches: number;
   winRate: number;
 }
@@ -30,6 +32,7 @@ interface Player {
   name: string;
   elo: number;
   initialElo: number;
+  winRate: number;
   totalMatchesPlayed: number;
   winCount: number;
   lossCount: number;
@@ -104,173 +107,254 @@ export default function PlayerDetailPage() {
   }
 
   return (
-    <main
-      style={{
-        maxWidth: 480,
-        margin: '48px auto',
-        padding: 24,
-        background: 'white',
-        borderRadius: 12,
-        boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-        minHeight: 400,
-      }}
-    >
-      {loading ? (
-        <p style={{ textAlign: 'center', color: '#64748b' }}>Cargando...</p>
-      ) : error ? (
-        <p style={{ textAlign: 'center', color: 'red' }}>{error}</p>
-      ) : player ? (
-        <>
-          <h1
-            style={{
-              fontSize: '2rem',
-              fontWeight: 800,
-              marginBottom: 16,
-              textAlign: 'center',
-              color: '#0ea5e9',
-            }}
-          >
-            {player.name}
-          </h1>
-          <ul style={{ listStyle: 'none', padding: 0, lineHeight: 1.6 }}>
-            <li>
-              <b>ELO actual:</b> {player.elo}
-            </li>
-            <li>
-              <b>Partidos jugados:</b> {player.totalMatchesPlayed}
-            </li>
-            <li>
-              <b>Ganados:</b> {player.winCount}
-            </li>
-            <li>
-              <b>Perdidos:</b> {player.lossCount}
-            </li>
-            <li>
-              <b>Empatados:</b> {player.drawCount}
-            </li>
-            <li>
-              <b>Goles a favor:</b> {player.goalsFor}
-            </li>
-            <li>
-              <b>Goles en contra:</b> {player.goalsAgainst}
-            </li>
-            <li>
-              <b>Asistencia:</b> {player.attendanceRate != null ? player.attendanceRate + '%' : '-'}
-            </li>
-            {player.streaks && (
-              <>
-                <li>
-                  <b>Racha actual:</b> <span style={{ color: streakColor, fontWeight: 600 }}>{streakEmoji} {player.streaks.currentCount} {streakLabel}</span>
-                </li>
-                <li>
-                  <b>Mejor racha de victorias:</b> {player.streaks.maxWinStreak}
-                </li>
-                <li>
-                  <b>Peor racha de derrotas:</b> {player.streaks.maxLossStreak}
-                </li>
-              </>
-            )}
-          </ul>
-          <h2
-            style={{
-              fontWeight: 700,
-              marginTop: 24,
-              marginBottom: 12,
-              color: '#0f172a',
-              fontSize: '1.25rem',
-            }}
-          >
-            Sinergias
-          </h2>
-          {synergies.length > 0 ? (
-            <>
-              <p style={{ margin: '4px 0 12px' }}>
-                <b>Mejor compañero:</b> {bestMate}
-                {worstMate && (
-                  <>
-                    {' | '}<b>Peor compañero:</b> {worstMate}
-                  </>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+      <div className="max-w-4xl mx-auto">
+        {loading ? (
+          <div className="text-center py-8">
+            <div className="text-white/70">Cargando...</div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <div className="text-red-400">{error}</div>
+          </div>
+        ) : player ? (
+          <>
+            {/* Header Card */}
+            <div className="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-2xl p-8 mb-6 shadow-2xl">
+              <div className="flex items-center justify-center gap-4">
+                <div className="text-5xl">👤</div>
+                <h1 className="text-4xl font-bold text-white">
+                  {player.name}
+                </h1>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Stats Card */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                  📊 Estadísticas
+                </h2>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-center">
+                      <div className="text-2xl font-bold text-blue-400">{player.elo}</div>
+                      <div className="text-white/70 text-sm">ELO Actual</div>
+                    </div>
+                    <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 text-center">
+                      <div className="text-2xl font-bold text-green-400">{player.winRate.toFixed(1)}%</div>
+                      <div className="text-white/70 text-sm">% Victorias</div>
+                    </div>
+                    <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 text-center">
+                      <div className="text-2xl font-bold text-purple-400">{player.totalMatchesPlayed}</div>
+                      <div className="text-white/70 text-sm">Partidos</div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-center">
+                      <div className="text-xl font-bold text-green-400">{player.winCount}</div>
+                      <div className="text-white/70 text-xs">Ganados</div>
+                    </div>
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-center">
+                      <div className="text-xl font-bold text-red-400">{player.lossCount}</div>
+                      <div className="text-white/70 text-xs">Perdidos</div>
+                    </div>
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-center">
+                      <div className="text-xl font-bold text-yellow-400">{player.drawCount}</div>
+                      <div className="text-white/70 text-xs">Empates</div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3">
+                      <div className="text-white/60 text-sm">Goles a favor</div>
+                      <div className="text-xl font-bold text-white">{player.goalsFor}</div>
+                    </div>
+                    <div className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3">
+                      <div className="text-white/60 text-sm">Goles en contra</div>
+                      <div className="text-xl font-bold text-white">{player.goalsAgainst}</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3">
+                    <div className="text-white/60 text-sm">Asistencia</div>
+                    <div className="text-xl font-bold text-white">
+                      {player.attendanceRate != null ? player.attendanceRate + '%' : '-'}
+                    </div>
+                  </div>
+
+                  {player.streaks && (
+                    <div className="space-y-3">
+                      <div className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3">
+                        <div className="text-white/60 text-sm">Racha actual</div>
+                        <div className="flex items-center gap-2">
+                          <span style={{ color: streakColor, fontSize: '1.25rem' }}>{streakEmoji}</span>
+                          <span className="text-xl font-bold text-white">
+                            {player.streaks.currentCount} {streakLabel}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-center">
+                          <div className="text-lg font-bold text-green-400">{player.streaks.maxWinStreak}</div>
+                          <div className="text-white/70 text-xs">Mejor racha victorias</div>
+                        </div>
+                        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-center">
+                          <div className="text-lg font-bold text-red-400">{player.streaks.maxLossStreak}</div>
+                          <div className="text-white/70 text-xs">Peor racha derrotas</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Synergies Card */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                  🤝 Sinergias
+                </h2>
+                {synergies.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-4">
+                      <div className="text-sm text-white/60 mb-2">Compañeros destacados</div>
+                      <div className="space-y-2">
+                        {bestMate && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-400">👑</span>
+                            <span className="text-white font-medium">{bestMate}</span>
+                          </div>
+                        )}
+                        {worstMate && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-red-400">💔</span>
+                            <span className="text-white font-medium">Peor: {worstMate}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 max-h-80 overflow-y-auto">
+                      {synergies.map((s) => (
+                        <div
+                          key={s.mate}
+                          className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3"
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-white">{s.mate}</span>
+                            <span 
+                              className={`text-sm px-2 py-1 rounded ${
+                                s.winRate >= 70 ? 'bg-green-500/20 text-green-400' :
+                                s.winRate >= 40 ? 'bg-yellow-500/20 text-yellow-400' :
+                                'bg-red-500/20 text-red-400'
+                              }`}
+                            >
+                              {s.winRate.toFixed(0)}%
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2 text-sm">
+                            <div className="text-center">
+                              <div className="text-green-400 font-medium">{s.victories}</div>
+                              <div className="text-white/60 text-xs">Victorias</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-red-400 font-medium">{s.losses}</div>
+                              <div className="text-white/60 text-xs">Derrotas</div>
+                            </div>
+                            <div className="text-center">
+                              <div className="text-yellow-400 font-medium">{s.draws}</div>
+                              <div className="text-white/60 text-xs">Empates</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <div className="text-white/60">Aún no se registran sinergias.</div>
+                  </div>
                 )}
-              </p>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th style={{ textAlign: 'left', paddingBottom: 4 }}>Compañero</th>
-                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Victorias</th>
-                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>Derrotas</th>
-                    <th style={{ textAlign: 'right', paddingBottom: 4 }}>% Victoria</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {synergies.map((s) => (
-                    <tr key={s.mate}>
-                      <td style={{ padding: '2px 0' }}>{s.mate}</td>
-                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.victories}</td>
-                      <td style={{ textAlign: 'right', padding: '2px 0' }}>{s.matches - s.victories}</td>
-                      <td
-                        style={{
-                          textAlign: 'right',
-                          padding: '2px 0',
-                          background: `rgb(${Math.round(255 * (1 - s.winRate / 100))},${Math.round(255 * (s.winRate / 100))},150)`,
-                        }}
-                      >
-                        {s.winRate.toFixed(0)}%
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          ) : (
-            <p style={{ color: '#64748b' }}>Aún no se registran sinergias.</p>
-          )}
-          <h2
-            style={{
-              fontWeight: 700,
-              marginTop: 24,
-              marginBottom: 12,
-              color: '#0f172a',
-              fontSize: '1.25rem',
-            }}
-          >
-            Historial
-          </h2>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {player.history.map((h) => (
-              <li
-                key={h.matchId}
-                style={{ borderBottom: '1px solid #e5e7eb', padding: '8px 0' }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>{new Date(h.changedAt).toLocaleDateString()}</span>
-                  <span>
-                    {h.newElo} ({h.newElo - h.oldElo > 0 ? '+' : ''}
-                    {h.newElo - h.oldElo})
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: 16, marginTop: 4 }}>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 600, marginBottom: 2 }}>Equipo A</p>
-                    <ul style={{ listStyle: 'none', padding: 0 }}>
-                      {h.teamAPlayers.map((p) => (
-                        <li key={p}>{p}</li>
-                      ))}
-                    </ul>
+              </div>
+            </div>
+
+            {/* History Card */}
+            <div className="mt-6 bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                📈 Historial
+              </h2>
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {player.history.map((h) => (
+                  <div
+                    key={h.matchId}
+                    className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-4"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-blue-400 font-mono text-sm">
+                        {new Date(h.changedAt).toLocaleDateString()}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-mono">
+                          {h.newElo}
+                        </span>
+                        <span className={`text-sm px-2 py-1 rounded font-mono ${
+                          h.newElo - h.oldElo > 0 
+                            ? 'bg-green-500/20 text-green-400' 
+                            : h.newElo - h.oldElo < 0
+                            ? 'bg-red-500/20 text-red-400'
+                            : 'bg-gray-500/20 text-gray-400'
+                        }`}>
+                          {h.newElo - h.oldElo > 0 ? '+' : ''}
+                          {h.newElo - h.oldElo}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-green-500/10 border border-green-500/30 rounded p-3">
+                        <h4 className="text-green-400 font-medium mb-2">Equipo A</h4>
+                        <div className="space-y-1">
+                          {h.teamAPlayers.map((p) => (
+                            <div 
+                              key={p} 
+                              className={`text-sm px-2 py-1 rounded ${
+                                p === player.name 
+                                  ? 'bg-green-500/30 text-green-300 font-medium' 
+                                  : 'text-white/80'
+                              }`}
+                            >
+                              {p}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3">
+                        <h4 className="text-blue-400 font-medium mb-2">Equipo B</h4>
+                        <div className="space-y-1">
+                          {h.teamBPlayers.map((p) => (
+                            <div 
+                              key={p} 
+                              className={`text-sm px-2 py-1 rounded ${
+                                p === player.name 
+                                  ? 'bg-blue-500/30 text-blue-300 font-medium' 
+                                  : 'text-white/80'
+                              }`}
+                            >
+                              {p}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 600, marginBottom: 2 }}>Equipo B</p>
-                    <ul style={{ listStyle: 'none', padding: 0 }}>
-                      {h.teamBPlayers.map((p) => (
-                        <li key={p}>{p}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
-    </main>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : null}
+      </div>
+    </div>
   );
 }
