@@ -283,7 +283,7 @@ export default function PlayerDetailPage() {
                         {worstMate && (
                           <div className="flex items-center gap-2">
                             <span className="text-red-400">💔</span>
-                            <span className="text-white font-medium">Peor: {worstMate}</span>
+                            <span className="text-white font-medium">{worstMate}</span>
                           </div>
                         )}
                       </div>
