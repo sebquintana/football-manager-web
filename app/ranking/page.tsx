@@ -30,50 +30,76 @@ export default function RankingPage() {
   }, []);
 
   return (
-    <main style={{
-      maxWidth: 420,
-      margin: '48px auto',
-      padding: 24,
-      background: 'white',
-      borderRadius: 12,
-      boxShadow: '0 2px 16px 0 rgba(0,0,0,0.08)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      minHeight: 400
-    }}>
-      <h1 style={{
-        fontSize: '2.2rem',
-        fontWeight: 800,
-        marginBottom: 24,
-        textAlign: 'center',
-        color: '#2563EB',
-        textShadow: '0 1px 2px #e0e7ef'
-      }}>🏆 Ranking de Jugadores</h1>
-      {loading ? (
-        <p style={{ textAlign: 'center', color: '#64748b' }}>Cargando...</p>
-      ) : (
-        <ul style={{ listStyle: 'none', padding: 0, width: '100%' }}>
-          {players.map((player, index) => {
-            let rowStyle = {};
-            if (index === 0) rowStyle = { background: '#FEF9C3', fontWeight: 'bold', color: '#B45309', borderRadius: '0.375rem', transform: 'scale(1.05)', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' };
-            else if (index === 1) rowStyle = { background: '#F3F4F6', fontWeight: 600, color: '#374151' };
-            else if (index === 2) rowStyle = { background: '#FFF7ED', fontWeight: 600, color: '#C2410C' };
-            return (
-              <li
-                key={player.name + player.elo}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 0.5rem', marginBottom: '0.25rem', ...rowStyle }}
-              >
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '1.1rem', width: 28, textAlign: 'right' }}>{index + 1}.</span>
-                  <span style={{ fontSize: '1rem', minWidth: 120 }}>{player.name}</span>
-                </span>
-                <span style={{ fontFamily: 'monospace', color: '#2563EB', fontSize: '1rem', marginLeft: 16, minWidth: 48, textAlign: 'right', borderLeft: '1px solid #e5e7eb', paddingLeft: 12 }}>{player.elo}</span>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </main>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 mb-6 shadow-2xl">
+          <div className="flex items-center justify-center gap-3">
+            <div className="text-4xl">🏆</div>
+            <h1 className="text-4xl font-bold text-white">
+              Ranking de Jugadores
+            </h1>
+          </div>
+        </div>
+
+        {/* Ranking List */}
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="text-white/70">Cargando...</div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {players.map((player, index) => {
+                let bgClass = '';
+                let textColor = '';
+                let borderColor = '';
+                
+                if (index === 0) {
+                  bgClass = 'bg-gradient-to-r from-yellow-500/20 to-amber-500/20';
+                  textColor = 'text-yellow-300';
+                  borderColor = 'border-yellow-500/30';
+                } else if (index === 1) {
+                  bgClass = 'bg-gradient-to-r from-gray-400/20 to-slate-400/20';
+                  textColor = 'text-gray-300';
+                  borderColor = 'border-gray-500/30';
+                } else if (index === 2) {
+                  bgClass = 'bg-gradient-to-r from-amber-600/20 to-orange-600/20';
+                  textColor = 'text-amber-300';
+                  borderColor = 'border-amber-600/30';
+                } else {
+                  bgClass = 'bg-slate-700/30';
+                  textColor = 'text-white/90';
+                  borderColor = 'border-slate-600/30';
+                }
+
+                return (
+                  <div
+                    key={player.name + player.elo}
+                    className={`${bgClass} ${borderColor} border rounded-xl p-4 backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-lg`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className={`text-2xl font-bold ${textColor} min-w-[3rem] text-center`}>
+                          {index + 1}.
+                        </div>
+                        <div className={`text-lg font-medium ${textColor}`}>
+                          {player.name}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-blue-400 font-mono">
+                          {player.elo}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
