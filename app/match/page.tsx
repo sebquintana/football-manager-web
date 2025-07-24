@@ -78,110 +78,168 @@ export default function MatchPage() {
   };
 
   return (
-    <main style={{
-      maxWidth: 480,
-      margin: '48px auto',
-      padding: 24,
-      background: 'white',
-      borderRadius: 12,
-      boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
-      minHeight: 400,
-    }}>
-      <h1 style={{
-        fontSize: '2rem',
-        fontWeight: 800,
-        marginBottom: 24,
-        textAlign: 'center',
-        color: '#2563EB',
-      }}>Cargar Resultado</h1>
-      {loading ? (
-        <p>Cargando jugadores...</p>
-      ) : (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontWeight: 600 }}>Equipo A</label>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <select
-                  key={i}
-                  value={teamA[i]}
-                  onChange={e => updateTeam('A', i, e.target.value)}
-                  style={{ width: '100%', marginBottom: 8 }}
-                >
-                  <option value="">Seleccionar jugador</option>
-                  {players.map(p => (
-                    <option
-                      key={p.id}
-                      value={p.name}
-                      disabled={
-                        (teamA.includes(p.name) && teamA[i] !== p.name) ||
-                        teamB.includes(p.name)
-                      }
-                    >
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              ))}
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontWeight: 600 }}>Equipo B</label>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <select
-                  key={i}
-                  value={teamB[i]}
-                  onChange={e => updateTeam('B', i, e.target.value)}
-                  style={{ width: '100%', marginBottom: 8 }}
-                >
-                  <option value="">Seleccionar jugador</option>
-                  {players.map(p => (
-                    <option
-                      key={p.id}
-                      value={p.name}
-                      disabled={
-                        (teamB.includes(p.name) && teamB[i] !== p.name) ||
-                        teamA.includes(p.name)
-                      }
-                    >
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              ))}
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-gradient-to-r from-orange-600 to-red-600 rounded-2xl p-8 mb-6 shadow-2xl">
+          <div className="flex items-center justify-center gap-3">
+            <div className="text-4xl">📊</div>
+            <h1 className="text-4xl font-bold text-white">
+              Cargar Resultado
+            </h1>
           </div>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            Ganador
-            <select value={winner} onChange={e => setWinner(e.target.value as 'A' | 'B')}>
-              <option value="A">Equipo A</option>
-                <option value="B">Equipo B</option>
-                <option value="draw">Empate</option>
-            </select>
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            Diferencia de Gol
-            <input type="number" value={goalDiff} onChange={e => setGoalDiff(Number(e.target.value))} />
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            Fecha
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} />
-          </label>
-          <button type="submit" disabled={submitting} style={{
-            background: '#2563EB',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            padding: '8px 20px',
-            fontWeight: 700,
-            fontSize: 16,
-            cursor: 'pointer',
-            marginTop: 12,
-          }}>
-            {submitting ? 'Guardando...' : 'Guardar Partido'}
-          </button>
-        </form>
-      )}
-      {message && <p style={{ textAlign: 'center', marginTop: 16 }}>{message}</p>}
-    </main>
+        </div>
+
+        {/* Form Card */}
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="text-white/70">Cargando jugadores...</div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Teams Selection */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Team A */}
+                <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6">
+                  <h2 className="text-xl font-bold text-green-400 mb-4 text-center">
+                    Equipo A
+                  </h2>
+                  <div className="space-y-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i}>
+                        <label className="block text-sm font-medium text-white/80 mb-1">
+                          Jugador {i + 1}
+                        </label>
+                        <select
+                          value={teamA[i]}
+                          onChange={e => updateTeam('A', i, e.target.value)}
+                          className="w-full p-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                        >
+                          <option value="">Seleccionar jugador</option>
+                          {players.map(p => (
+                            <option
+                              key={p.id}
+                              value={p.name}
+                              disabled={
+                                (teamA.includes(p.name) && teamA[i] !== p.name) ||
+                                teamB.includes(p.name)
+                              }
+                            >
+                              {p.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Team B */}
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
+                  <h2 className="text-xl font-bold text-blue-400 mb-4 text-center">
+                    Equipo B
+                  </h2>
+                  <div className="space-y-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i}>
+                        <label className="block text-sm font-medium text-white/80 mb-1">
+                          Jugador {i + 1}
+                        </label>
+                        <select
+                          value={teamB[i]}
+                          onChange={e => updateTeam('B', i, e.target.value)}
+                          className="w-full p-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="">Seleccionar jugador</option>
+                          {players.map(p => (
+                            <option
+                              key={p.id}
+                              value={p.name}
+                              disabled={
+                                (teamB.includes(p.name) && teamB[i] !== p.name) ||
+                                teamA.includes(p.name)
+                              }
+                            >
+                              {p.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Match Details */}
+              <div className="bg-slate-700/30 rounded-xl p-6 border border-slate-600/30">
+                <h3 className="text-lg font-semibold text-white mb-4">Detalles del Partido</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-2">
+                      Ganador
+                    </label>
+                    <select 
+                      value={winner} 
+                      onChange={e => setWinner(e.target.value as 'A' | 'B')}
+                      className="w-full p-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    >
+                      <option value="A">Equipo A</option>
+                      <option value="B">Equipo B</option>
+                      <option value="draw">Empate</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-2">
+                      Diferencia de Goles
+                    </label>
+                    <input 
+                      type="number" 
+                      value={goalDiff} 
+                      onChange={e => setGoalDiff(Number(e.target.value))}
+                      className="w-full p-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                      min="0"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-white/80 mb-2">
+                      Fecha
+                    </label>
+                    <input 
+                      type="date" 
+                      value={date} 
+                      onChange={e => setDate(e.target.value)}
+                      className="w-full p-3 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button 
+                type="submit" 
+                disabled={submitting}
+                className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02]"
+              >
+                {submitting ? 'Guardando...' : 'Guardar Partido'}
+              </button>
+            </form>
+          )}
+
+          {/* Message */}
+          {message && (
+            <div className={`mt-6 p-4 rounded-xl text-center font-medium ${
+              message.includes('exitosamente') 
+                ? 'bg-green-500/20 border border-green-500/50 text-green-300' 
+                : 'bg-red-500/20 border border-red-500/50 text-red-300'
+            }`}>
+              {message}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
