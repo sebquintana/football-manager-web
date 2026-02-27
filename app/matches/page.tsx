@@ -34,6 +34,7 @@ export default function MatchesPage() {
     const fetchMatches = async () => {
       try {
         const res = await fetch(`${apiUrl}/matches/summary`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: Match[] = await res.json();
         data.sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
@@ -78,6 +79,7 @@ export default function MatchesPage() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Notificaciones"
             className="text-white hover:bg-white/10"
           >
             <Bell className="h-4 w-4" />

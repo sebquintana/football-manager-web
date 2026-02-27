@@ -41,6 +41,7 @@ export default function Page() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Notificaciones"
             className="text-white hover:bg-white/10"
           >
             <Bell className="h-4 w-4" />

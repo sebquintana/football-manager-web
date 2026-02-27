@@ -120,7 +120,7 @@ export default function StatisticsPage() {
   const fetchStatistics = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:3000/statistics/general')
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/statistics/general`)
       
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`)

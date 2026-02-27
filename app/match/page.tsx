@@ -33,7 +33,7 @@ export default function MatchPage() {
 
   useEffect(() => {
     fetch(`${apiUrl}/players`)
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
       .then(data => setPlayers(data))
       .catch(err => console.error('Error fetching players', err))
       .finally(() => setLoading(false));
@@ -61,6 +61,7 @@ export default function MatchPage() {
       });
       if (!res.ok) throw new Error('Request failed');
       setMessage('Partido cargado exitosamente');
+      setTimeout(() => setMessage(null), 4000);
       setTeamA(Array(5).fill(""));
       setTeamB(Array(5).fill(""));
       setGoalDiff(0);
@@ -118,6 +119,7 @@ export default function MatchPage() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Notificaciones"
             className="text-white hover:bg-white/10"
           >
             <Bell className="h-4 w-4" />

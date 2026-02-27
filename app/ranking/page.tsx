@@ -29,6 +29,7 @@ export default function RankingPage() {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
       try {
         const res = await fetch(`${apiUrl}/players/ranking`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         setPlayers(data);
       } catch (err) {
@@ -70,6 +71,7 @@ export default function RankingPage() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Notificaciones"
             className="text-white hover:bg-white/10"
           >
             <Bell className="h-4 w-4" />
@@ -123,7 +125,7 @@ export default function RankingPage() {
 
                     return (
                       <div
-                        key={player.name + player.elo}
+                        key={player.name}
                         className={`${bgClass} ${borderColor} border rounded-xl p-4 backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-lg`}
                       >
                         <div className="flex items-center justify-between">

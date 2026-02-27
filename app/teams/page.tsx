@@ -15,19 +15,31 @@ import {
 import { Bell, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+interface TeamOption {
+  teamA: string[];
+  teamB: string[];
+  eloA: number;
+  eloB: number;
+  difference: number;
+  balanceScore: number;
+  teamAMetrics: { avgElo: number; avgWinRate: number; victoryProbability: number };
+  teamBMetrics: { avgElo: number; avgWinRate: number; victoryProbability: number };
+  synergyWarnings?: string[];
+}
+
 export default function TeamsPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const [players, setPlayers] = useState([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [teams, setTeams] = useState<any[]>([]);
+  const [teams, setTeams] = useState<TeamOption[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [expandedSynergies, setExpandedSynergies] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     fetch(`${apiUrl}/players`)
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
       .then(data => {
         setPlayers(data);
         setLoading(false);
@@ -99,6 +111,7 @@ export default function TeamsPage() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Notificaciones"
             className="text-white hover:bg-white/10"
           >
             <Bell className="h-4 w-4" />

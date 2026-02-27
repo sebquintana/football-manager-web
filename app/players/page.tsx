@@ -30,6 +30,7 @@ export default function PlayersPage() {
     const fetchPlayers = async () => {
       try {
         const res = await fetch(`${apiUrl}/players`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data: Player[] = await res.json();
         data.sort((a, b) => a.name.localeCompare(b.name));
         setPlayers(data);
@@ -72,6 +73,7 @@ export default function PlayersPage() {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Notificaciones"
             className="text-white hover:bg-white/10"
           >
             <Bell className="h-4 w-4" />

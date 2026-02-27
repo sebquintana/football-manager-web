@@ -88,7 +88,7 @@ export default function PlayerDetailPage() {
     };
 
     fetchPlayer();
-  }, [name]);
+  }, [name, apiUrl]);
 
   let streakLabel = '';
   let streakEmoji = '';
