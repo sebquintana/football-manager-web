@@ -181,7 +181,7 @@ export default function StatisticsPage() {
       </header>
 
       <main className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-auto">
-        <div className="container mx-auto p-6 space-y-6">
+        <div className="p-6 space-y-6">
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
