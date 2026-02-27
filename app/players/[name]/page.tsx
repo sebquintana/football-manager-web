@@ -106,7 +106,7 @@ export default function PlayerDetailPage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full -m-4">
       <PageHeader title={player?.name || 'Jugador'} showSearch={false} />
       <div className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
         <div className="max-w-4xl mx-auto">
