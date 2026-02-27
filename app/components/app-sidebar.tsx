@@ -1,7 +1,7 @@
 "use client"
 
 import type * as React from "react"
-import { Trophy, Users, Target, Calendar, BarChart3, Zap, TrendingUp } from "lucide-react"
+import { Trophy, Users, Target, Calendar, BarChart3, Zap } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
 import { Sidebar, SidebarContent, SidebarRail } from "@/components/ui/sidebar"
@@ -38,11 +38,6 @@ const data = {
       title: "Cargar Resultado",
       url: "/match",
       icon: Zap,
-    },
-    {
-      title: "Estadísticas",
-      url: "/statistics",
-      icon: TrendingUp,
     },
   ],
 }
