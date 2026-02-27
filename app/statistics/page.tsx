@@ -5,19 +5,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
-import { 
-  TrendingUp, 
-  Users, 
-  Target, 
-  Trophy, 
-  Flame, 
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import {
+  TrendingUp,
+  Users,
+  Target,
+  Trophy,
+  Flame,
   UserCheck,
   BarChart3,
   Calendar,
   Award,
   Zap,
-  ChevronDown, 
-  ChevronRight
+  ChevronDown,
+  ChevronRight,
+  Bell,
 } from "lucide-react"
 
 interface AttendanceStats {
@@ -142,51 +153,58 @@ export default function StatisticsPage() {
     }))
   }
 
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6">
+  return (
+    <div className="flex flex-col h-full -m-4">
+      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/80 border-b border-white/10 shadow-lg">
+        <div className="flex items-center gap-2 px-4 flex-1">
+          <SidebarTrigger className="-ml-1 text-white" />
+          <Separator orientation="vertical" className="mr-2 h-4 bg-white/20" />
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem className="hidden md:block">
+                <BreadcrumbLink href="/" className="text-white/70">
+                  Football Manager
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="hidden md:block text-white/50" />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-white">Estadísticas</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+        <div className="flex items-center gap-2 px-4">
+          <Button variant="ghost" size="icon" aria-label="Notificaciones" className="text-white hover:bg-white/10">
+            <Bell className="h-4 w-4" />
+          </Button>
+        </div>
+      </header>
+
+      <main className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-auto">
+        <div className="container mx-auto p-6 space-y-6">
+      {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-lg text-gray-600">Cargando estadísticas...</p>
+            <p className="text-lg text-white/70">Cargando estadísticas...</p>
           </div>
         </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto p-6">
-        <Card className="border-red-200 bg-red-50">
+      ) : error ? (
+        <Card className="border-red-500/50 bg-red-500/10">
           <CardHeader>
-            <CardTitle className="text-red-700">Error al cargar estadísticas</CardTitle>
-            <CardDescription className="text-red-600">{error}</CardDescription>
+            <CardTitle className="text-red-400">Error al cargar estadísticas</CardTitle>
+            <CardDescription className="text-red-300">{error}</CardDescription>
           </CardHeader>
         </Card>
-      </div>
-    )
-  }
-
-  if (!statistics) {
-    return (
-      <div className="container mx-auto p-6">
+      ) : !statistics ? (
         <Card>
           <CardHeader>
             <CardTitle>No hay datos disponibles</CardTitle>
             <CardDescription>No se encontraron estadísticas para mostrar.</CardDescription>
           </CardHeader>
         </Card>
-      </div>
-    )
-  }
-
-  return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center gap-3 mb-6">
-        <TrendingUp className="h-8 w-8 text-blue-600" />
-        <h1 className="text-3xl font-bold">Estadísticas Generales</h1>
-      </div>
+      ) : (
+        <>
 
       {/* Attendance Statistics */}
       <Card>
@@ -694,6 +712,10 @@ export default function StatisticsPage() {
           </CardContent>
         )}
       </Card>
+        </>
+      )}
+        </div>
+      </main>
     </div>
   )
 }
