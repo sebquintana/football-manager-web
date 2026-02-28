@@ -1,7 +1,7 @@
 "use client"
 
 import type * as React from "react"
-import { Trophy, Users, Target, Calendar, BarChart3, Zap, Shield } from "lucide-react"
+import { Trophy, Users, Target, Calendar, BarChart3, BarChart2, Zap, Shield } from "lucide-react"
 import { useUser, SignInButton, UserButton } from "@clerk/nextjs"
 
 import { NavMain } from "@/components/nav-main"
@@ -10,6 +10,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarRail } from "@/component
 const publicNav = [
   { title: "Dashboard", url: "/", icon: BarChart3, isActive: true },
   { title: "Ranking", url: "/ranking", icon: Trophy },
+  { title: "Estadísticas", url: "/statistics", icon: BarChart2 },
   { title: "Jugadores", url: "/players", icon: Users },
   { title: "Equipos", url: "/teams", icon: Target },
   { title: "Partidos", url: "/matches", icon: Calendar },
