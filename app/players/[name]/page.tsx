@@ -99,7 +99,7 @@ export default function PlayerDetailPage() {
   }
 
   return (
-    <div className="flex flex-col h-full -m-4">
+    <div className="flex flex-col h-full">
       <PageHeader title={player?.name || 'Jugador'} showSearch={false} />
       <div className="flex-1 bg-black overflow-auto p-4">
         <div className="max-w-4xl mx-auto">

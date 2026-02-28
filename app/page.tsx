@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Page() {
   return (
-    <div className="flex flex-col h-full -m-4">
+    <div className="flex flex-col h-full">
       <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center gap-2 bg-black/90 backdrop-blur supports-[backdrop-filter]:bg-black/80 border-b border-zinc-800">
         <div className="flex items-center gap-2 px-4 flex-1">
           <SidebarTrigger className="-ml-1 text-zinc-400 hover:text-white" />
