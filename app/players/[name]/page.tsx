@@ -232,12 +232,16 @@ export default function PlayerDetailPage() {
                   {player.history.map((h, idx) => {
                     const diff = h.newElo - h.oldElo;
                     const isReset = h.matchId?.startsWith('season-reset');
+                    const isAdminEdit = h.matchId?.startsWith('admin-edit:');
+                    const adminEmail = isAdminEdit ? h.matchId!.replace('admin-edit:', '') : null;
                     return (
                       <div key={h.matchId ?? idx} className="bg-zinc-800 border border-zinc-700 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-zinc-500 text-sm">
                             {isReset
                               ? `Reset temporada ${h.matchId?.replace('season-reset-', '')}`
+                              : isAdminEdit
+                              ? <span className="text-xs px-2 py-0.5 rounded-lg bg-purple-500/10 text-purple-400">Edición admin · {adminEmail}</span>
                               : new Date(h.changedAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}
                           </span>
                           <div className="flex items-center gap-2">
