@@ -12,7 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Bell } from "lucide-react";
+import { Bell, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Player {
@@ -46,85 +46,56 @@ export default function PlayersPage() {
 
   return (
     <div className="flex flex-col h-full -m-4">
-      <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/80 border-b border-white/10 shadow-lg">
+      <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center gap-2 bg-black/90 backdrop-blur supports-[backdrop-filter]:bg-black/80 border-b border-zinc-800">
         <div className="flex items-center gap-2 px-4 flex-1">
-          <SidebarTrigger className="-ml-1 text-white" />
-          <Separator
-            orientation="vertical"
-            className="mr-2 h-4 bg-white/20"
-          />
+          <SidebarTrigger className="-ml-1 text-zinc-400 hover:text-white" />
+          <Separator orientation="vertical" className="mr-2 h-4 bg-zinc-800" />
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/" className="text-white/70">
+                <BreadcrumbLink href="/" className="text-zinc-500 hover:text-white text-sm">
                   Football Manager
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block text-white/50" />
+              <BreadcrumbSeparator className="hidden md:block text-zinc-700" />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-white">
-                  Jugadores
-                </BreadcrumbPage>
+                <BreadcrumbPage className="text-white text-sm font-medium">Jugadores</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
         <div className="flex items-center gap-2 px-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Notificaciones"
-            className="text-white hover:bg-white/10"
-          >
+          <Button variant="ghost" size="icon" aria-label="Notificaciones" className="text-zinc-400 hover:text-white hover:bg-zinc-800">
             <Bell className="h-4 w-4" />
           </Button>
         </div>
       </header>
 
-      <main className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-auto">
+      <main className="flex-1 bg-black overflow-auto">
         <div className="p-6">
           <div className="max-w-2xl mx-auto">
-            {/* Header Card */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 mb-6 shadow-2xl">
-              <div className="flex items-center justify-center gap-3">
-                <div className="text-4xl">👥</div>
-                <h1 className="text-4xl font-bold text-white">
-                  Jugadores
-                </h1>
-              </div>
-            </div>
+            <h1 className="text-3xl font-bold text-white tracking-tight mb-6">Jugadores</h1>
 
-            {/* Players List */}
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
+            <div className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden">
               {loading ? (
-                <div className="text-center py-8">
-                  <div className="text-white/70">Cargando...</div>
-                </div>
+                <div className="text-center py-12 text-zinc-500">Cargando...</div>
               ) : error ? (
-                <div className="text-center py-8">
-                  <div className="text-red-400">{error}</div>
-                </div>
+                <div className="text-center py-12 text-red-400">{error}</div>
               ) : (
-                <div className="grid gap-3">
+                <div>
                   {players.map((player, index) => (
                     <Link
                       key={player.id}
                       href={`/players/${encodeURIComponent(player.name)}`}
-                      className="group"
+                      className={`flex items-center justify-between px-5 py-4 hover:bg-zinc-800 transition-colors ${
+                        index !== players.length - 1 ? 'border-b border-zinc-800' : ''
+                      }`}
                     >
-                      <div className="bg-slate-700/40 border border-slate-600/30 rounded-xl p-4 backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:bg-slate-600/40 hover:border-blue-500/50">
-                        <div className="flex items-center gap-4">
-                          <div className="text-lg font-medium text-blue-400 min-w-[3rem] text-center">
-                            {index + 1}.
-                          </div>
-                          <div className="text-lg font-medium text-white/90 group-hover:text-white transition-colors">
-                            {player.name}
-                          </div>
-                          <div className="ml-auto text-blue-400/60 group-hover:text-blue-400 transition-colors">
-                            →
-                          </div>
-                        </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-zinc-600 text-sm w-6 text-right tabular-nums">{index + 1}</span>
+                        <span className="text-white font-medium">{player.name}</span>
                       </div>
+                      <ChevronRight className="h-4 w-4 text-zinc-600" />
                     </Link>
                   ))}
                 </div>

@@ -35,33 +35,33 @@
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
-    --sidebar-background: 224 71.4% 4.1%;
-    --sidebar-foreground: 210 20% 98%;
-    --sidebar-primary: 224.3 76.3% 94%;
-    --sidebar-primary-foreground: 222.2 47.4% 1.2%;
-    --sidebar-accent: 216 34% 17%;
-    --sidebar-accent-foreground: 210 20% 98%;
-    --sidebar-border: 216 34% 17%;
-    --sidebar-ring: 263.4 70% 50.4%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 240 5.9% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 240 5.9% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 211 100% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 3.7% 20%;
+    --input: 240 3.7% 15.9%;
+    --ring: 211 100% 53%;
+    --sidebar-background: 0 0% 4%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 211 100% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 12%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 3.7% 12%;
+    --sidebar-ring: 211 100% 53%;
   }
 }
 
@@ -72,20 +72,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-/* Mejoras adicionales para el dashboard */
-.dashboard-gradient {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.card-glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-glass {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(20px);
 }

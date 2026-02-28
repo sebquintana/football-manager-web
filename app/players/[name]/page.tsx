@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { PageHeader } from '@/components/page-header';
 
-// ...existing code...
-
 interface HistoryEntry {
   oldElo: number;
   newElo: number;
@@ -53,6 +51,8 @@ interface Player {
   attendanceRate?: number | null;
 }
 
+const statCell = "bg-zinc-800 border border-zinc-700 rounded-xl p-4 text-center";
+
 export default function PlayerDetailPage() {
   const { name } = useParams<{ name: string }>();
   const playerName = decodeURIComponent(name);
@@ -91,301 +91,192 @@ export default function PlayerDetailPage() {
   }, [name, apiUrl]);
 
   let streakLabel = '';
-  let streakEmoji = '';
+  let streakColor = 'text-zinc-400';
   if (player?.streaks) {
-    if (player.streaks.currentType === 'win') {
-      streakLabel = 'Victorias';
-      streakEmoji = '🟢';
-    } else if (player.streaks.currentType === 'loss') {
-      streakLabel = 'Derrotas';
-      streakEmoji = '🔴';
-    } else {
-      streakLabel = 'Empates';
-      streakEmoji = '🟡';
-    }
+    if (player.streaks.currentType === 'win') { streakLabel = 'victorias'; streakColor = 'text-green-400'; }
+    else if (player.streaks.currentType === 'loss') { streakLabel = 'derrotas'; streakColor = 'text-red-400'; }
+    else { streakLabel = 'empates'; streakColor = 'text-yellow-400'; }
   }
 
   return (
     <div className="flex flex-col h-full -m-4">
       <PageHeader title={player?.name || 'Jugador'} showSearch={false} />
-      <div className="flex-1 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+      <div className="flex-1 bg-black overflow-auto p-4">
         <div className="max-w-4xl mx-auto">
-      {loading ? (
-          <div className="text-center py-8">
-            <div className="text-white/70">Cargando...</div>
-          </div>
-        ) : error ? (
-          <div className="text-center py-8">
-            <div className="text-red-400">{error}</div>
-          </div>
-        ) : player ? (
-          <>
-            {/* Header Card */}
-            <div className="bg-gradient-to-r from-cyan-600 to-blue-600 rounded-2xl p-8 mb-6 shadow-2xl">
-              <div className="flex items-center justify-center gap-4">
-                <div className="text-5xl">👤</div>
-                <h1 className="text-4xl font-bold text-white">
-                  {player.name}
-                </h1>
+          {loading ? (
+            <div className="text-center py-12 text-zinc-500">Cargando...</div>
+          ) : error ? (
+            <div className="text-center py-12 text-red-400">{error}</div>
+          ) : player ? (
+            <>
+              {/* Hero */}
+              <div className="mb-6">
+                <h1 className="text-4xl font-bold text-white tracking-tight">{player.name}</h1>
+                <div className="flex items-baseline gap-3 mt-1">
+                  <span className="text-5xl font-bold text-blue-400 tabular-nums">{player.elo}</span>
+                  <span className="text-zinc-500 text-sm">ELO</span>
+                  <span className="text-2xl font-semibold text-green-400 tabular-nums ml-4">{player.winRate.toFixed(1)}%</span>
+                  <span className="text-zinc-500 text-sm">victorias</span>
+                </div>
               </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Stats Card */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                  📊 Estadísticas
-                </h2>
-                <div className="space-y-6">
-                  {/* Estadísticas Principales - Más grandes y destacadas */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/40 rounded-xl p-6 text-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent"></div>
-                      <div className="relative">
-                        <div className="text-3xl font-bold text-blue-300 mb-1">{player.elo}</div>
-                        <div className="text-white/80 text-sm font-medium flex items-center justify-center gap-1">
-                          🎯 ELO Actual
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Stats */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+                  <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Estadísticas</h2>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-4 gap-2">
+                      <div className={statCell}>
+                        <div className="text-lg font-bold text-white">{player.totalMatchesPlayed}</div>
+                        <div className="text-zinc-500 text-xs mt-1">Jugados</div>
+                      </div>
+                      <div className={statCell}>
+                        <div className="text-lg font-bold text-green-400">{player.winCount}</div>
+                        <div className="text-zinc-500 text-xs mt-1">Ganados</div>
+                      </div>
+                      <div className={statCell}>
+                        <div className="text-lg font-bold text-red-400">{player.lossCount}</div>
+                        <div className="text-zinc-500 text-xs mt-1">Perdidos</div>
+                      </div>
+                      <div className={statCell}>
+                        <div className="text-lg font-bold text-yellow-400">{player.drawCount}</div>
+                        <div className="text-zinc-500 text-xs mt-1">Empates</div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className={statCell}>
+                        <div className="text-lg font-bold text-white">{player.goalsFor}</div>
+                        <div className="text-zinc-500 text-xs mt-1">Goles a favor</div>
+                      </div>
+                      <div className={statCell}>
+                        <div className="text-lg font-bold text-white">{player.goalsAgainst}</div>
+                        <div className="text-zinc-500 text-xs mt-1">En contra</div>
+                      </div>
+                      <div className={statCell}>
+                        <div className="text-lg font-bold text-white">
+                          {player.attendanceRate != null ? `${player.attendanceRate}%` : '—'}
+                        </div>
+                        <div className="text-zinc-500 text-xs mt-1">Asistencia</div>
+                      </div>
+                    </div>
+
+                    {player.streaks && (
+                      <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4">
+                        <div className="text-xs text-zinc-500 mb-2">Racha actual</div>
+                        <div className={`text-2xl font-bold ${streakColor}`}>
+                          {player.streaks.currentCount} <span className="text-base font-normal">{streakLabel}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 mt-3">
+                          <div>
+                            <div className="text-xs text-zinc-500">Mejor racha</div>
+                            <div className="text-green-400 font-semibold">{player.streaks.maxWinStreak} victorias</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-zinc-500">Peor racha</div>
+                            <div className="text-red-400 font-semibold">{player.streaks.maxLossStreak} derrotas</div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/40 rounded-xl p-6 text-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent"></div>
-                      <div className="relative">
-                        <div className="text-3xl font-bold text-green-300 mb-1">{player.winRate.toFixed(1)}%</div>
-                        <div className="text-white/80 text-sm font-medium flex items-center justify-center gap-1">
-                          🏆 % Victorias
-                        </div>
-                      </div>
-                    </div>
+                    )}
                   </div>
+                </div>
 
-                  {/* Partidos y Resultados */}
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-white/90 flex items-center gap-2">
-                      ⚽ Partidos
-                    </h3>
-                    <div className="grid grid-cols-4 gap-3">
-                      <div className="bg-purple-500/15 border border-purple-500/30 rounded-lg p-4 text-center">
-                        <div className="text-xl font-bold text-purple-300">{player.totalMatchesPlayed}</div>
-                        <div className="text-white/70 text-xs">Total</div>
-                      </div>
-                      <div className="bg-green-500/15 border border-green-500/30 rounded-lg p-4 text-center">
-                        <div className="text-xl font-bold text-green-300">{player.winCount}</div>
-                        <div className="text-white/70 text-xs">Ganados</div>
-                      </div>
-                      <div className="bg-red-500/15 border border-red-500/30 rounded-lg p-4 text-center">
-                        <div className="text-xl font-bold text-red-300">{player.lossCount}</div>
-                        <div className="text-white/70 text-xs">Perdidos</div>
-                      </div>
-                      <div className="bg-yellow-500/15 border border-yellow-500/30 rounded-lg p-4 text-center">
-                        <div className="text-xl font-bold text-yellow-300">{player.drawCount}</div>
-                        <div className="text-white/70 text-xs">Empates</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Goles y Asistencia */}
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-semibold text-white/90 flex items-center gap-2">
-                      🥅 Rendimiento
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="bg-slate-700/40 border border-slate-600/40 rounded-lg p-4 text-center">
-                        <div className="text-xl font-bold text-cyan-300">{player.goalsFor}</div>
-                        <div className="text-white/70 text-xs">Goles a favor</div>
-                      </div>
-                      <div className="bg-slate-700/40 border border-slate-600/40 rounded-lg p-4 text-center">
-                        <div className="text-xl font-bold text-orange-300">{player.goalsAgainst}</div>
-                        <div className="text-white/70 text-xs">Goles en contra</div>
-                      </div>
-                      <div className="bg-slate-700/40 border border-slate-600/40 rounded-lg p-4 text-center">
-                        <div className="text-xl font-bold text-indigo-300">
-                          {player.attendanceRate != null ? player.attendanceRate + '%' : '-'}
-                        </div>
-                        <div className="text-white/70 text-xs">Asistencia</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Rachas */}
-                  {player.streaks && (
+                {/* Synergies */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+                  <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Sinergias</h2>
+                  {synergies.length > 0 ? (
                     <div className="space-y-3">
-                      <h3 className="text-lg font-semibold text-white/90 flex items-center gap-2">
-                        🔥 Rachas
-                      </h3>
-                      <div className="bg-gradient-to-r from-slate-700/40 to-slate-600/40 border border-slate-600/50 rounded-xl p-4">
-                        <div className="text-center mb-4">
-                          <div className="text-sm text-white/60 mb-2">Racha actual</div>
-                          <div className="flex items-center justify-center gap-3">
-                            <span style={{ fontSize: '2rem' }}>{streakEmoji}</span>
-                            <div>
-                              <div className="text-2xl font-bold text-white">
-                                {player.streaks.currentCount}
-                              </div>
-                              <div className="text-sm text-white/80">{streakLabel}</div>
+                      {(bestMate || worstMate) && (
+                        <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-3 space-y-2">
+                          {bestMate && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-zinc-500">Mejor compañero</span>
+                              <span className="text-green-400 font-medium text-sm">{bestMate}</span>
+                            </div>
+                          )}
+                          {worstMate && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-zinc-500">Peor compañero</span>
+                              <span className="text-red-400 font-medium text-sm">{worstMate}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className="space-y-2 max-h-72 overflow-y-auto">
+                        {synergies.map((s) => (
+                          <div key={s.mate} className="flex items-center justify-between px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl">
+                            <span className="text-white text-sm font-medium">{s.mate}</span>
+                            <div className="flex items-center gap-3 text-xs text-zinc-500">
+                              <span>{s.victories}V · {s.losses}D · {s.draws}E</span>
+                              <span className={`font-semibold ${
+                                s.winRate >= 60 ? 'text-green-400' :
+                                s.winRate >= 40 ? 'text-yellow-400' :
+                                'text-red-400'
+                              }`}>{s.winRate.toFixed(0)}%</span>
                             </div>
                           </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="bg-green-500/15 border border-green-500/30 rounded-lg p-3 text-center">
-                            <div className="text-lg font-bold text-green-300">{player.streaks.maxWinStreak}</div>
-                            <div className="text-white/70 text-xs">Mejor racha victorias</div>
-                          </div>
-                          <div className="bg-red-500/15 border border-red-500/30 rounded-lg p-3 text-center">
-                            <div className="text-lg font-bold text-red-300">{player.streaks.maxLossStreak}</div>
-                            <div className="text-white/70 text-xs">Peor racha derrotas</div>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
+                  ) : (
+                    <div className="text-center py-8 text-zinc-600">Sin sinergias registradas</div>
                   )}
                 </div>
               </div>
 
-              {/* Synergies Card */}
-              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                  🤝 Sinergias
-                </h2>
-                {synergies.length > 0 ? (
-                  <div className="space-y-4">
-                    <div className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-4">
-                      <div className="text-sm text-white/60 mb-2">Compañeros destacados</div>
-                      <div className="space-y-2">
-                        {bestMate && (
+              {/* History */}
+              <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+                <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Historial</h2>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {player.history.map((h) => {
+                    const diff = h.newElo - h.oldElo;
+                    return (
+                      <div key={h.matchId} className="bg-zinc-800 border border-zinc-700 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-zinc-500 text-sm">
+                            {new Date(h.changedAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-green-400">👑</span>
-                            <span className="text-white font-medium">{bestMate}</span>
-                          </div>
-                        )}
-                        {worstMate && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-red-400">💔</span>
-                            <span className="text-white font-medium">{worstMate}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 max-h-80 overflow-y-auto">
-                      {synergies.map((s) => (
-                        <div
-                          key={s.mate}
-                          className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-white">{s.mate}</span>
-                            <span 
-                              className={`text-sm px-2 py-1 rounded ${
-                                s.winRate >= 70 ? 'bg-green-500/20 text-green-400' :
-                                s.winRate >= 40 ? 'bg-yellow-500/20 text-yellow-400' :
-                                'bg-red-500/20 text-red-400'
-                              }`}
-                            >
-                              {s.winRate.toFixed(0)}%
+                            <span className="text-white font-mono font-semibold">{h.newElo}</span>
+                            <span className={`text-sm font-mono px-2 py-0.5 rounded-lg ${
+                              diff > 0 ? 'bg-green-500/10 text-green-400' :
+                              diff < 0 ? 'bg-red-500/10 text-red-400' :
+                              'bg-zinc-700 text-zinc-400'
+                            }`}>
+                              {diff > 0 ? '+' : ''}{diff}
                             </span>
                           </div>
-                          <div className="grid grid-cols-3 gap-2 text-sm">
-                            <div className="text-center">
-                              <div className="text-green-400 font-medium">{s.victories}</div>
-                              <div className="text-white/60 text-xs">Victorias</div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <div className="text-xs text-green-400 font-medium mb-1.5">Equipo A</div>
+                            <div className="space-y-1">
+                              {h.teamAPlayers.map((p) => (
+                                <div key={p} className={`text-xs px-2 py-1 rounded-lg ${
+                                  p === player.name ? 'bg-green-500/10 text-green-300 font-medium' : 'text-zinc-400'
+                                }`}>{p}</div>
+                              ))}
                             </div>
-                            <div className="text-center">
-                              <div className="text-red-400 font-medium">{s.losses}</div>
-                              <div className="text-white/60 text-xs">Derrotas</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-yellow-400 font-medium">{s.draws}</div>
-                              <div className="text-white/60 text-xs">Empates</div>
+                          </div>
+                          <div>
+                            <div className="text-xs text-blue-400 font-medium mb-1.5">Equipo B</div>
+                            <div className="space-y-1">
+                              {h.teamBPlayers.map((p) => (
+                                <div key={p} className={`text-xs px-2 py-1 rounded-lg ${
+                                  p === player.name ? 'bg-blue-500/10 text-blue-300 font-medium' : 'text-zinc-400'
+                                }`}>{p}</div>
+                              ))}
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <div className="text-white/60">Aún no se registran sinergias.</div>
-                  </div>
-                )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-
-            {/* History Card */}
-            <div className="mt-6 bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/10">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                📈 Historial
-              </h2>
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {player.history.map((h) => (
-                  <div
-                    key={h.matchId}
-                    className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-4"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-blue-400 font-mono text-sm">
-                        {new Date(h.changedAt).toLocaleDateString()}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-mono">
-                          {h.newElo}
-                        </span>
-                        <span className={`text-sm px-2 py-1 rounded font-mono ${
-                          h.newElo - h.oldElo > 0 
-                            ? 'bg-green-500/20 text-green-400' 
-                            : h.newElo - h.oldElo < 0
-                            ? 'bg-red-500/20 text-red-400'
-                            : 'bg-gray-500/20 text-gray-400'
-                        }`}>
-                          {h.newElo - h.oldElo > 0 ? '+' : ''}
-                          {h.newElo - h.oldElo}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-green-500/10 border border-green-500/30 rounded p-3">
-                        <h4 className="text-green-400 font-medium mb-2">Equipo A</h4>
-                        <div className="space-y-1">
-                          {h.teamAPlayers.map((p) => (
-                            <div 
-                              key={p} 
-                              className={`text-sm px-2 py-1 rounded ${
-                                p === player.name 
-                                  ? 'bg-green-500/30 text-green-300 font-medium' 
-                                  : 'text-white/80'
-                              }`}
-                            >
-                              {p}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3">
-                        <h4 className="text-blue-400 font-medium mb-2">Equipo B</h4>
-                        <div className="space-y-1">
-                          {h.teamBPlayers.map((p) => (
-                            <div 
-                              key={p} 
-                              className={`text-sm px-2 py-1 rounded ${
-                                p === player.name 
-                                  ? 'bg-blue-500/30 text-blue-300 font-medium' 
-                                  : 'text-white/80'
-                              }`}
-                            >
-                              {p}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        ) : null}
+            </>
+          ) : null}
         </div>
       </div>
     </div>
