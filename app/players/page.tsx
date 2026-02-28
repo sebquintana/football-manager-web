@@ -34,7 +34,7 @@ export default function PlayersPage() {
         const data: Player[] = await res.json();
         data.sort((a, b) => a.name.localeCompare(b.name));
         setPlayers(data);
-      } catch (err) {
+      } catch {
         setError('No se pudieron obtener los jugadores.');
       } finally {
         setLoading(false);

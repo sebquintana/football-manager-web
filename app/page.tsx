@@ -50,7 +50,7 @@ export default function Page() {
               </div>
             </div>
             <h1 className="text-5xl font-bold text-white mb-3 tracking-tight">
-              Temporada 2025
+              Temporada 2026
             </h1>
             <p className="text-zinc-400 text-lg">
               Bienvenido a Football Manager

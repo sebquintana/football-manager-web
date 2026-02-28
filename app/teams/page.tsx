@@ -15,6 +15,11 @@ import {
 import { Bell, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+interface Player {
+  id: string;
+  name: string;
+}
+
 interface TeamOption {
   teamA: string[];
   teamB: string[];
@@ -29,7 +34,7 @@ interface TeamOption {
 
 export default function TeamsPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [teams, setTeams] = useState<TeamOption[]>([]);
@@ -119,7 +124,7 @@ export default function TeamsPage() {
                       Seleccionar Jugadores
                     </h2>
                     <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
-                      {players.map((p: any) => (
+                      {players.map((p: Player) => (
                         <label
                           key={p.id}
                           className={`flex items-center gap-2 p-2.5 rounded-xl cursor-pointer border text-sm transition-colors ${

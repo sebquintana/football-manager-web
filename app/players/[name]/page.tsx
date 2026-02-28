@@ -80,7 +80,7 @@ export default function PlayerDetailPage() {
           setBestMate(null);
           setWorstMate(null);
         }
-      } catch (err) {
+      } catch {
         setError('No se pudo obtener la información del jugador.');
       } finally {
         setLoading(false);

@@ -40,7 +40,7 @@ export default function MatchesPage() {
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
         setMatches(data);
-      } catch (err) {
+      } catch {
         setError("No se pudieron obtener los partidos.");
       } finally {
         setLoading(false);
