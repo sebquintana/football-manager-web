@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, FormEvent } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -24,6 +25,7 @@ const labelClass = "block text-xs font-medium text-zinc-400 mb-1.5";
 
 export default function MatchPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const { getToken } = useAuth();
   const [players, setPlayers] = useState<Player[]>([]);
   const [teamA, setTeamA] = useState<string[]>(Array(5).fill(""));
   const [teamB, setTeamB] = useState<string[]>(Array(5).fill(""));
@@ -51,9 +53,13 @@ export default function MatchPage() {
     setSubmitting(true);
     setMessage(null);
     try {
+      const token = await getToken();
       const res = await fetch(`${apiUrl}/match`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           teamANames: teamA,
           teamBNames: teamB,
