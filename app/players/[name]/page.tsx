@@ -8,9 +8,9 @@ interface HistoryEntry {
   oldElo: number;
   newElo: number;
   changedAt: string;
-  matchId: string;
-  teamAPlayers: string[];
-  teamBPlayers: string[];
+  matchId?: string;
+  teamAPlayers?: string[];
+  teamBPlayers?: string[];
 }
 
 interface MateSynergy {
@@ -229,13 +229,16 @@ export default function PlayerDetailPage() {
               <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
                 <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Historial</h2>
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {player.history.map((h) => {
+                  {player.history.map((h, idx) => {
                     const diff = h.newElo - h.oldElo;
+                    const isReset = h.matchId?.startsWith('season-reset');
                     return (
-                      <div key={h.matchId} className="bg-zinc-800 border border-zinc-700 rounded-xl p-4">
+                      <div key={h.matchId ?? idx} className="bg-zinc-800 border border-zinc-700 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-zinc-500 text-sm">
-                            {new Date(h.changedAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            {isReset
+                              ? `Reset temporada ${h.matchId?.replace('season-reset-', '')}`
+                              : new Date(h.changedAt).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}
                           </span>
                           <div className="flex items-center gap-2">
                             <span className="text-white font-mono font-semibold">{h.newElo}</span>
@@ -248,28 +251,30 @@ export default function PlayerDetailPage() {
                             </span>
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <div className="text-xs text-green-400 font-medium mb-1.5">Equipo A</div>
-                            <div className="space-y-1">
-                              {h.teamAPlayers.map((p) => (
-                                <div key={p} className={`text-xs px-2 py-1 rounded-lg ${
-                                  p === player.name ? 'bg-green-500/10 text-green-300 font-medium' : 'text-zinc-400'
-                                }`}>{p}</div>
-                              ))}
+                        {h.teamAPlayers && h.teamBPlayers ? (
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <div className="text-xs text-green-400 font-medium mb-1.5">Equipo A</div>
+                              <div className="space-y-1">
+                                {h.teamAPlayers.map((p) => (
+                                  <div key={p} className={`text-xs px-2 py-1 rounded-lg ${
+                                    p === player.name ? 'bg-green-500/10 text-green-300 font-medium' : 'text-zinc-400'
+                                  }`}>{p}</div>
+                                ))}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-xs text-blue-400 font-medium mb-1.5">Equipo B</div>
+                              <div className="space-y-1">
+                                {h.teamBPlayers.map((p) => (
+                                  <div key={p} className={`text-xs px-2 py-1 rounded-lg ${
+                                    p === player.name ? 'bg-blue-500/10 text-blue-300 font-medium' : 'text-zinc-400'
+                                  }`}>{p}</div>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                          <div>
-                            <div className="text-xs text-blue-400 font-medium mb-1.5">Equipo B</div>
-                            <div className="space-y-1">
-                              {h.teamBPlayers.map((p) => (
-                                <div key={p} className={`text-xs px-2 py-1 rounded-lg ${
-                                  p === player.name ? 'bg-blue-500/10 text-blue-300 font-medium' : 'text-zinc-400'
-                                }`}>{p}</div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
+                        ) : null}
                       </div>
                     );
                   })}
