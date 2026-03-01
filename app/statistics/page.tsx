@@ -25,7 +25,7 @@ import {
 
 interface AttendanceStats {
   highestAttendance: { players: string[]; rate: number }
-  lowestAttendance: { players: string[]; rate: number }
+  lowestAttendance: { players: string[]; rate: number; matchesPlayed: number }
   averageAttendance: number
   totalMatches: number
   activePlayers: number
@@ -107,6 +107,12 @@ function eloBarColor(range: string): string {
   if (range.startsWith('950') || parseInt(range) < 950) return '#ef4444'
   if (range.startsWith('1000') || range.startsWith('1050')) return '#3b82f6'
   return '#eab308'
+}
+
+function formatStreakDate(iso: string): string {
+  const [, month, day] = iso.split('-')
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+  return `${parseInt(day)} de ${months[parseInt(month) - 1]}`
 }
 
 const CURRENT_YEAR = new Date().getFullYear()
@@ -375,7 +381,7 @@ export default function StatisticsPage() {
                         </div>
                         {stats.streaks.longestWinStreak.from && stats.streaks.longestWinStreak.to && (
                           <p className="text-zinc-600 text-xs mt-2">
-                            {stats.streaks.longestWinStreak.from} → {stats.streaks.longestWinStreak.to}
+                            Del {formatStreakDate(stats.streaks.longestWinStreak.from)} al {formatStreakDate(stats.streaks.longestWinStreak.to)}
                           </p>
                         )}
                       </div>
@@ -400,7 +406,7 @@ export default function StatisticsPage() {
                         </div>
                         {stats.streaks.longestLossStreak.from && stats.streaks.longestLossStreak.to && (
                           <p className="text-zinc-600 text-xs mt-2">
-                            {stats.streaks.longestLossStreak.from} → {stats.streaks.longestLossStreak.to}
+                            Del {formatStreakDate(stats.streaks.longestLossStreak.from)} al {formatStreakDate(stats.streaks.longestLossStreak.to)}
                           </p>
                         )}
                       </div>
@@ -636,6 +642,9 @@ export default function StatisticsPage() {
                     </p>
                     <p className="text-red-400 text-xl font-bold mt-1">
                       {stats.attendance.lowestAttendance.rate.toFixed(0)}%
+                    </p>
+                    <p className="text-zinc-600 text-xs mt-1">
+                      {stats.attendance.lowestAttendance.matchesPlayed}/{stats.attendance.totalMatches} partidos
                     </p>
                   </div>
 
