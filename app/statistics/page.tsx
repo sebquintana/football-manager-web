@@ -60,8 +60,8 @@ interface ResultStats {
 }
 
 interface StreakStats {
-  longestWinStreak: { player: string; streak: number }
-  longestLossStreak: { player: string; streak: number }
+  longestWinStreak: { player: string; streak: number; from: string | null; to: string | null }
+  longestLossStreak: { player: string; streak: number; from: string | null; to: string | null }
   mostStreaky: { player: string; variance: number }
   mostConsistent: { player: string; variance: number }
 }
@@ -234,7 +234,7 @@ export default function StatisticsPage() {
                   {/* Podio: Win Rate */}
                   <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
                     <p className="text-xs text-zinc-500 uppercase tracking-wider mb-4 text-center">
-                      Win Rate
+                      % De Victorias
                     </p>
                     {stats.topPerformers.byWinRate.length === 0 ? (
                       <p className="text-zinc-600 text-sm text-center py-4">Sin datos suficientes<br /><span className="text-xs">(mín. 3 partidos)</span></p>
@@ -364,13 +364,20 @@ export default function StatisticsPage() {
                       Racha ganadora más larga
                     </p>
                     {stats.streaks.longestWinStreak.streak > 0 ? (
-                      <div className="flex items-center justify-between">
-                        <span className="text-white font-semibold text-lg">
-                          {stats.streaks.longestWinStreak.player}
-                        </span>
-                        <span className="bg-green-900/60 text-green-400 text-sm font-bold px-3 py-1 rounded-full">
-                          🔥 {stats.streaks.longestWinStreak.streak} victorias
-                        </span>
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-white font-semibold text-lg">
+                            {stats.streaks.longestWinStreak.player}
+                          </span>
+                          <span className="bg-green-900/60 text-green-400 text-sm font-bold px-3 py-1 rounded-full">
+                            🔥 {stats.streaks.longestWinStreak.streak} victorias
+                          </span>
+                        </div>
+                        {stats.streaks.longestWinStreak.from && stats.streaks.longestWinStreak.to && (
+                          <p className="text-zinc-600 text-xs mt-2">
+                            {stats.streaks.longestWinStreak.from} → {stats.streaks.longestWinStreak.to}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <p className="text-zinc-600 text-sm">Sin datos</p>
@@ -382,13 +389,20 @@ export default function StatisticsPage() {
                       Racha perdedora más larga
                     </p>
                     {stats.streaks.longestLossStreak.streak > 0 ? (
-                      <div className="flex items-center justify-between">
-                        <span className="text-white font-semibold text-lg">
-                          {stats.streaks.longestLossStreak.player}
-                        </span>
-                        <span className="bg-red-900/60 text-red-400 text-sm font-bold px-3 py-1 rounded-full">
-                          💀 {stats.streaks.longestLossStreak.streak} derrotas
-                        </span>
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-white font-semibold text-lg">
+                            {stats.streaks.longestLossStreak.player}
+                          </span>
+                          <span className="bg-red-900/60 text-red-400 text-sm font-bold px-3 py-1 rounded-full">
+                            💀 {stats.streaks.longestLossStreak.streak} derrotas
+                          </span>
+                        </div>
+                        {stats.streaks.longestLossStreak.from && stats.streaks.longestLossStreak.to && (
+                          <p className="text-zinc-600 text-xs mt-2">
+                            {stats.streaks.longestLossStreak.from} → {stats.streaks.longestLossStreak.to}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <p className="text-zinc-600 text-sm">Sin datos</p>
