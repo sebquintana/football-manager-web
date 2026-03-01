@@ -29,6 +29,7 @@ interface AttendanceStats {
   averageAttendance: number
   totalMatches: number
   activePlayers: number
+  activePlayerNames: string[]
 }
 
 interface EloStats {
@@ -658,6 +659,15 @@ export default function StatisticsPage() {
                     <p className="text-white text-xl font-bold mt-1">
                       {stats.attendance.averageAttendance.toFixed(0)}%
                     </p>
+                    {stats.attendance.activePlayerNames.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {stats.attendance.activePlayerNames.map((name) => (
+                          <span key={name} className="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-full">
+                            {name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
