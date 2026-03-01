@@ -74,6 +74,19 @@ interface SynergyStats {
   teamImprovers: { player: string; teamImpact: number }[]
 }
 
+interface SeasonPlayerStat {
+  player: string
+  value: number
+  wins?: number
+  played?: number
+}
+
+interface TopPerformersStats {
+  byWinRate: SeasonPlayerStat[]
+  byWins: SeasonPlayerStat[]
+  bySeasonalElo: SeasonPlayerStat[]
+}
+
 interface GeneralStatisticsDto {
   attendance: AttendanceStats
   elo: EloStats
@@ -81,15 +94,10 @@ interface GeneralStatisticsDto {
   results: ResultStats
   streaks: StreakStats
   synergies: SynergyStats
+  topPerformers: TopPerformersStats
   generatedAt: string
   totalPlayers: number
   totalMatches: number
-}
-
-interface RankingPlayer {
-  position: number
-  name: string
-  elo: number
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -105,9 +113,6 @@ const CURRENT_YEAR = new Date().getFullYear()
 const YEARS = Array.from({ length: CURRENT_YEAR - 2024 + 1 }, (_, i) => 2024 + i)
 
 const MEDAL = ['🥇', '🥈', '🥉']
-const MEDAL_LABEL = ['Oro', 'Plata', 'Bronce']
-const MEDAL_BORDER = ['border-yellow-500', 'border-zinc-400', 'border-amber-700']
-const MEDAL_TEXT = ['text-yellow-400', 'text-zinc-300', 'text-amber-600']
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -142,7 +147,6 @@ function StatChip({
 export default function StatisticsPage() {
   const [season, setSeason] = useState<number>(CURRENT_YEAR)
   const [stats, setStats] = useState<GeneralStatisticsDto | null>(null)
-  const [ranking, setRanking] = useState<RankingPlayer[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -151,15 +155,9 @@ export default function StatisticsPage() {
     setError(null)
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
     try {
-      const [statsRes, rankingRes] = await Promise.all([
-        fetch(`${apiUrl}/statistics/general?season=${year}`),
-        fetch(`${apiUrl}/players/ranking`),
-      ])
-      if (!statsRes.ok) throw new Error(`Statistics: HTTP ${statsRes.status}`)
-      if (!rankingRes.ok) throw new Error(`Ranking: HTTP ${rankingRes.status}`)
-      const [statsData, rankingData] = await Promise.all([statsRes.json(), rankingRes.json()])
-      setStats(statsData)
-      setRanking(rankingData)
+      const res = await fetch(`${apiUrl}/statistics/general?season=${year}`)
+      if (!res.ok) throw new Error(`Statistics: HTTP ${res.status}`)
+      setStats(await res.json())
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido')
     } finally {
@@ -228,65 +226,110 @@ export default function StatisticsPage() {
 
           {!loading && !error && stats && (
             <>
-              {/* ── Sección 1: Podio Top 3 ELO ── */}
+              {/* ── Sección 1: Tres podios de temporada ── */}
               <section>
-                <SectionTitle>Podio ELO</SectionTitle>
-                <p className="text-xs text-zinc-600 mb-4 -mt-2">Ranking global (todos los años)</p>
-                {ranking.length === 0 ? (
-                  <p className="text-zinc-600 text-sm">Sin datos de ranking.</p>
-                ) : (
-                  <div className="flex items-end justify-center gap-3">
-                    {/* Silver (2nd) – left */}
-                    {ranking[1] && (
-                      <div
-                        className={`flex flex-col items-center bg-zinc-900 border ${MEDAL_BORDER[1]} rounded-2xl px-5 py-5 flex-1 max-w-[160px]`}
-                      >
-                        <span className="text-3xl mb-1">{MEDAL[1]}</span>
-                        <span className={`text-xs font-semibold uppercase tracking-wider mb-2 ${MEDAL_TEXT[1]}`}>
-                          {MEDAL_LABEL[1]}
-                        </span>
-                        <span className="text-white font-bold text-lg leading-tight text-center">
-                          {ranking[1].name}
-                        </span>
-                        <span className="text-zinc-400 text-sm tabular-nums mt-1">{ranking[1].elo}</span>
-                      </div>
-                    )}
+                <SectionTitle>Podios de temporada {season}</SectionTitle>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-                    {/* Gold (1st) – center, taller */}
-                    {ranking[0] && (
-                      <div
-                        className={`flex flex-col items-center bg-zinc-900 border-2 ${MEDAL_BORDER[0]} rounded-2xl px-5 py-7 flex-1 max-w-[180px] shadow-lg shadow-yellow-500/10`}
-                      >
-                        <span className="text-4xl mb-1">{MEDAL[0]}</span>
-                        <span className={`text-xs font-semibold uppercase tracking-wider mb-2 ${MEDAL_TEXT[0]}`}>
-                          {MEDAL_LABEL[0]}
-                        </span>
-                        <span className="text-white font-bold text-xl leading-tight text-center">
-                          {ranking[0].name}
-                        </span>
-                        <span className="text-yellow-400 text-base tabular-nums font-bold mt-1">
-                          {ranking[0].elo}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Bronze (3rd) – right */}
-                    {ranking[2] && (
-                      <div
-                        className={`flex flex-col items-center bg-zinc-900 border ${MEDAL_BORDER[2]} rounded-2xl px-5 py-5 flex-1 max-w-[160px]`}
-                      >
-                        <span className="text-3xl mb-1">{MEDAL[2]}</span>
-                        <span className={`text-xs font-semibold uppercase tracking-wider mb-2 ${MEDAL_TEXT[2]}`}>
-                          {MEDAL_LABEL[2]}
-                        </span>
-                        <span className="text-white font-bold text-lg leading-tight text-center">
-                          {ranking[2].name}
-                        </span>
-                        <span className="text-zinc-400 text-sm tabular-nums mt-1">{ranking[2].elo}</span>
+                  {/* Podio: Win Rate */}
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
+                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-4 text-center">
+                      Win Rate
+                    </p>
+                    {stats.topPerformers.byWinRate.length === 0 ? (
+                      <p className="text-zinc-600 text-sm text-center py-4">Sin datos suficientes<br /><span className="text-xs">(mín. 3 partidos)</span></p>
+                    ) : (
+                      <div className="space-y-2">
+                        {stats.topPerformers.byWinRate.map((entry, i) => (
+                          <div
+                            key={`wr-${entry.player}`}
+                            className={`flex items-center justify-between rounded-xl px-3 py-2 ${i === 0 ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-zinc-800/60'}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg leading-none">{MEDAL[i]}</span>
+                              <span className={`font-semibold text-sm ${i === 0 ? 'text-white' : 'text-zinc-300'}`}>
+                                {entry.player}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className={`font-bold tabular-nums text-sm ${i === 0 ? 'text-yellow-400' : 'text-zinc-300'}`}>
+                                {entry.value}%
+                              </span>
+                              {entry.wins !== undefined && entry.played !== undefined && (
+                                <p className="text-zinc-600 text-xs">{entry.wins}V/{entry.played}PJ</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
-                )}
+
+                  {/* Podio: Victorias */}
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
+                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-4 text-center">
+                      Victorias
+                    </p>
+                    {stats.topPerformers.byWins.length === 0 ? (
+                      <p className="text-zinc-600 text-sm text-center py-4">Sin datos</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {stats.topPerformers.byWins.map((entry, i) => (
+                          <div
+                            key={`wins-${entry.player}`}
+                            className={`flex items-center justify-between rounded-xl px-3 py-2 ${i === 0 ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-zinc-800/60'}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg leading-none">{MEDAL[i]}</span>
+                              <span className={`font-semibold text-sm ${i === 0 ? 'text-white' : 'text-zinc-300'}`}>
+                                {entry.player}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className={`font-bold tabular-nums text-sm ${i === 0 ? 'text-yellow-400' : 'text-zinc-300'}`}>
+                                {entry.value}V
+                              </span>
+                              {entry.played !== undefined && (
+                                <p className="text-zinc-600 text-xs">{entry.played} PJ</p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Podio: ELO de temporada */}
+                  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4">
+                    <p className="text-xs text-zinc-500 uppercase tracking-wider mb-4 text-center">
+                      ELO de temporada
+                    </p>
+                    {stats.topPerformers.bySeasonalElo.length === 0 ? (
+                      <p className="text-zinc-600 text-sm text-center py-4">Sin datos</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {stats.topPerformers.bySeasonalElo.map((entry, i) => (
+                          <div
+                            key={`elo-${entry.player}`}
+                            className={`flex items-center justify-between rounded-xl px-3 py-2 ${i === 0 ? 'bg-yellow-500/10 border border-yellow-500/30' : 'bg-zinc-800/60'}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg leading-none">{MEDAL[i]}</span>
+                              <span className={`font-semibold text-sm ${i === 0 ? 'text-white' : 'text-zinc-300'}`}>
+                                {entry.player}
+                              </span>
+                            </div>
+                            <span className={`font-bold tabular-nums text-sm ${i === 0 ? 'text-yellow-400' : 'text-zinc-300'}`}>
+                              {entry.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-zinc-700 text-xs text-center mt-3">ELO al último partido jugado</p>
+                  </div>
+
+                </div>
               </section>
 
               {/* ── Sección 2: Resumen de temporada ── */}
