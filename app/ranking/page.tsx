@@ -17,7 +17,29 @@ import { Button } from "@/components/ui/button";
 type Player = {
   name: string;
   elo: number;
+  recentForm: ('W' | 'L' | 'D')[];
 };
+
+function FormChips({ form }: { form: ('W' | 'L' | 'D')[] }) {
+  return (
+    <div className="flex gap-1">
+      {form.map((r, i) => (
+        <span
+          key={i}
+          className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+            r === 'W'
+              ? 'bg-green-500/20 text-green-400'
+              : r === 'L'
+              ? 'bg-red-500/20 text-red-400'
+              : 'bg-yellow-500/20 text-yellow-400'
+          }`}
+        >
+          {r}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 const medals = ['🥇', '🥈', '🥉'];
 
@@ -93,9 +115,14 @@ export default function RankingPage() {
                             <span className="text-zinc-600 text-sm font-medium">{index + 1}</span>
                           )}
                         </span>
-                        <span className={`font-semibold ${index === 0 ? 'text-white text-lg' : 'text-zinc-200'}`}>
-                          {player.name}
-                        </span>
+                        <div className="flex flex-col gap-1">
+                          <span className={`font-semibold ${index === 0 ? 'text-white text-lg' : 'text-zinc-200'}`}>
+                            {player.name}
+                          </span>
+                          {player.recentForm?.length > 0 && (
+                            <FormChips form={player.recentForm} />
+                          )}
+                        </div>
                       </div>
                       <span className={`font-bold tabular-nums ${
                         index === 0 ? 'text-blue-400 text-xl' : 'text-zinc-300 text-base'

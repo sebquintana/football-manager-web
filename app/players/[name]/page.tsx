@@ -58,6 +58,7 @@ interface Player {
     maxLossStreak: number;
   };
   attendanceRate?: number | null;
+  recentForm?: ('W' | 'L' | 'D')[];
 }
 
 interface ChartPoint {
@@ -161,6 +162,20 @@ export default function PlayerDetailPage() {
                   <span className="text-2xl font-semibold text-green-400 tabular-nums ml-4">{player.winRate.toFixed(1)}%</span>
                   <span className="text-zinc-500 text-sm">victorias</span>
                 </div>
+                {player.recentForm && player.recentForm.length > 0 && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-zinc-600 text-xs">Últimos 5:</span>
+                    <div className="flex gap-1">
+                      {player.recentForm.map((r, i) => (
+                        <span key={i} className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+                          r === 'W' ? 'bg-green-500/20 text-green-400' :
+                          r === 'L' ? 'bg-red-500/20 text-red-400' :
+                          'bg-yellow-500/20 text-yellow-400'
+                        }`}>{r}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
