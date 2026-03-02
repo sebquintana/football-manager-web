@@ -296,8 +296,8 @@ export default function PlayerDetailPage() {
                         dataKey="elo"
                         stroke="#3b82f6"
                         strokeWidth={2}
-                        dot={(props: { cx: number; cy: number; payload: ChartPoint }) => {
-                          const { cx, cy, payload } = props
+                        dot={(props: { cx?: number; cy?: number; payload: ChartPoint }) => {
+                          const { cx = 0, cy = 0, payload } = props
                           if (payload.isReset) return <circle key={payload.matchId} cx={cx} cy={cy} r={4} fill="#eab308" stroke="none" />
                           if (payload.isAdmin) return <circle key={payload.matchId} cx={cx} cy={cy} r={4} fill="#a855f7" stroke="none" />
                           return <circle key={payload.matchId} cx={cx} cy={cy} r={2} fill="#3b82f6" stroke="none" />
