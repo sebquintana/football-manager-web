@@ -3,6 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { PageHeader } from '@/components/page-header';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts'
 
 interface HistoryEntry {
   oldElo: number;
@@ -51,7 +60,28 @@ interface Player {
   attendanceRate?: number | null;
 }
 
+interface ChartPoint {
+  label: string
+  elo: number
+  matchId: string
+  isReset: boolean
+  isAdmin: boolean
+}
+
 const statCell = "bg-zinc-800 border border-zinc-700 rounded-xl p-4 text-center";
+
+function EloTooltip({ active, payload }: { active?: boolean; payload?: { payload: ChartPoint }[] }) {
+  if (!active || !payload?.length) return null
+  const d = payload[0].payload
+  return (
+    <div className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs shadow-lg">
+      <p className="text-zinc-400 mb-0.5">{d.label}</p>
+      <p className="text-white font-bold text-sm">{d.elo} ELO</p>
+      {d.isReset && <p className="text-yellow-400 mt-0.5">Reset de temporada</p>}
+      {d.isAdmin && <p className="text-purple-400 mt-0.5">Ajuste admin</p>}
+    </div>
+  )
+}
 
 export default function PlayerDetailPage() {
   const { name } = useParams<{ name: string }>();
@@ -97,6 +127,19 @@ export default function PlayerDetailPage() {
     else if (player.streaks.currentType === 'loss') { streakLabel = 'derrotas'; streakColor = 'text-red-400'; }
     else { streakLabel = 'empates'; streakColor = 'text-yellow-400'; }
   }
+
+  const chartData: ChartPoint[] = player
+    ? [
+        { label: 'Inicio', elo: player.initialElo, matchId: 'initial', isReset: false, isAdmin: false },
+        ...player.history.map((h, i) => {
+          const isReset = h.matchId?.startsWith('season-reset') ?? false
+          const isAdmin = h.matchId?.startsWith('admin-edit:') ?? false
+          const date = new Date(h.changedAt)
+          const label = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`
+          return { label, elo: h.newElo, matchId: h.matchId ?? `idx-${i}`, isReset, isAdmin }
+        }),
+      ]
+    : []
 
   return (
     <div className="flex flex-col h-full">
@@ -224,6 +267,52 @@ export default function PlayerDetailPage() {
                   )}
                 </div>
               </div>
+
+              {/* ELO Evolution Chart */}
+              {chartData.length > 1 && (
+                <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+                  <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">
+                    Evolución ELO
+                  </h2>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <LineChart data={chartData} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
+                      <XAxis
+                        dataKey="label"
+                        tick={{ fill: '#71717a', fontSize: 10 }}
+                        axisLine={false}
+                        tickLine={false}
+                        interval="preserveStartEnd"
+                      />
+                      <YAxis
+                        domain={['auto', 'auto']}
+                        tick={{ fill: '#71717a', fontSize: 10 }}
+                        axisLine={false}
+                        tickLine={false}
+                      />
+                      <Tooltip content={<EloTooltip />} />
+                      <ReferenceLine y={1000} stroke="#3f3f46" strokeDasharray="3 3" />
+                      <Line
+                        type="monotone"
+                        dataKey="elo"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
+                        dot={(props: { cx: number; cy: number; payload: ChartPoint }) => {
+                          const { cx, cy, payload } = props
+                          if (payload.isReset) return <circle key={payload.matchId} cx={cx} cy={cy} r={4} fill="#eab308" stroke="none" />
+                          if (payload.isAdmin) return <circle key={payload.matchId} cx={cx} cy={cy} r={4} fill="#a855f7" stroke="none" />
+                          return <circle key={payload.matchId} cx={cx} cy={cy} r={2} fill="#3b82f6" stroke="none" />
+                        }}
+                        activeDot={{ r: 5, fill: '#60a5fa' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                  <div className="flex gap-4 mt-3 text-xs text-zinc-500 flex-wrap">
+                    <span><span className="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1" />Partido</span>
+                    <span><span className="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1" />Reset temporada</span>
+                    <span><span className="inline-block w-2 h-2 rounded-full bg-purple-500 mr-1" />Ajuste admin</span>
+                  </div>
+                </div>
+              )}
 
               {/* History */}
               <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
