@@ -59,6 +59,18 @@ interface Player {
   };
   attendanceRate?: number | null;
   recentForm?: ('V' | 'D' | 'E')[];
+  rivals?: {
+    hardestOpponent: string | null;
+    easiestOpponent: string | null;
+    opponents: Array<{
+      opponent: string;
+      victories: number;
+      losses: number;
+      draws: number;
+      matches: number;
+      winRate: number;
+    }>;
+  };
 }
 
 interface ChartPoint {
@@ -281,6 +293,51 @@ export default function PlayerDetailPage() {
                     <div className="text-center py-8 text-zinc-600">Sin sinergias registradas</div>
                   )}
                 </div>
+              </div>
+
+              {/* Rivals */}
+              <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
+                <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wide mb-4">Rivales</h2>
+                {player.rivals && player.rivals.opponents.length > 0 ? (
+                  <div className="space-y-3">
+                    {(player.rivals.hardestOpponent || player.rivals.easiestOpponent) && (
+                      <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-3 space-y-2">
+                        {player.rivals.hardestOpponent && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-zinc-500">Rival más duro</span>
+                            <span className="text-red-400 font-medium text-sm">{player.rivals.hardestOpponent}</span>
+                          </div>
+                        )}
+                        {player.rivals.easiestOpponent && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-zinc-500">Víctima favorita</span>
+                            <span className="text-green-400 font-medium text-sm">{player.rivals.easiestOpponent}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <div className="space-y-2 max-h-72 overflow-y-auto">
+                      {player.rivals.opponents
+                        .slice()
+                        .sort((a, b) => b.matches - a.matches)
+                        .map((r) => (
+                          <div key={r.opponent} className="flex items-center justify-between px-3 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl">
+                            <span className="text-white text-sm font-medium">{r.opponent}</span>
+                            <div className="flex items-center gap-3 text-xs text-zinc-500">
+                              <span>{r.victories}V · {r.losses}D · {r.draws}E</span>
+                              <span className={`font-semibold ${
+                                r.winRate >= 60 ? 'text-green-400' :
+                                r.winRate >= 40 ? 'text-yellow-400' :
+                                'text-red-400'
+                              }`}>{r.winRate}%</span>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-zinc-600">Sin enfrentamientos registrados</div>
+                )}
               </div>
 
               {/* ELO Evolution Chart */}
