@@ -58,7 +58,7 @@ interface Player {
     maxLossStreak: number;
   };
   attendanceRate?: number | null;
-  recentForm?: ('W' | 'L' | 'D')[];
+  recentForm?: ('V' | 'D' | 'E')[];
 }
 
 interface ChartPoint {
@@ -168,8 +168,8 @@ export default function PlayerDetailPage() {
                     <div className="flex gap-1">
                       {player.recentForm.map((r, i) => (
                         <span key={i} className={`text-xs font-bold px-1.5 py-0.5 rounded ${
-                          r === 'W' ? 'bg-green-500/20 text-green-400' :
-                          r === 'L' ? 'bg-red-500/20 text-red-400' :
+                          r === 'V' ? 'bg-green-500/20 text-green-400' :
+                          r === 'D' ? 'bg-red-500/20 text-red-400' :
                           'bg-yellow-500/20 text-yellow-400'
                         }`}>{r}</span>
                       ))}

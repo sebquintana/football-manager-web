@@ -17,19 +17,19 @@ import { Button } from "@/components/ui/button";
 type Player = {
   name: string;
   elo: number;
-  recentForm: ('W' | 'L' | 'D')[];
+  recentForm: ('V' | 'D' | 'E')[];
 };
 
-function FormChips({ form }: { form: ('W' | 'L' | 'D')[] }) {
+function FormChips({ form }: { form: ('V' | 'D' | 'E')[] }) {
   return (
     <div className="flex gap-1">
       {form.map((r, i) => (
         <span
           key={i}
           className={`text-xs font-bold px-1.5 py-0.5 rounded ${
-            r === 'W'
+            r === 'V'
               ? 'bg-green-500/20 text-green-400'
-              : r === 'L'
+              : r === 'D'
               ? 'bg-red-500/20 text-red-400'
               : 'bg-yellow-500/20 text-yellow-400'
           }`}
