@@ -127,6 +127,7 @@ export default function MatchPage() {
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [pendingMatch, setPendingMatch] = useState<PendingMatch | null>(null);
+  const [pendingInfo, setPendingInfo] = useState<string | null>(null);
   const [loadingPlayers, setLoadingPlayers] = useState(true);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -164,8 +165,19 @@ export default function MatchPage() {
         if (playersRes.status === 'fulfilled' && playersRes.value.ok) {
           setPlayers(await playersRes.value.json());
         }
-        if (pendingRes.status === 'fulfilled' && pendingRes.value.ok) {
-          setPendingMatch(await pendingRes.value.json());
+        if (pendingRes.status === 'fulfilled') {
+          if (pendingRes.value.ok) {
+            setPendingMatch(await pendingRes.value.json());
+            setPendingInfo(null);
+          } else if (pendingRes.value.status === 404) {
+            setPendingInfo('No hay partidos pendientes guardados.');
+          } else if (pendingRes.value.status === 401 || pendingRes.value.status === 403) {
+            setPendingInfo('No se pudo cargar el pendiente: iniciá sesión con un usuario admin.');
+          } else {
+            setPendingInfo('No se pudo cargar el partido pendiente.');
+          }
+        } else {
+          setPendingInfo('No se pudo cargar el partido pendiente.');
         }
       } finally {
         setLoadingPlayers(false);
@@ -226,6 +238,7 @@ export default function MatchPage() {
       if (!res.ok) throw new Error('Error');
       const saved: PendingMatch = await res.json();
       setPendingMatch(saved);
+      setPendingInfo(null);
       setStep(1);
       setSelected([]);
       setTeamOptions([]);
@@ -249,6 +262,7 @@ export default function MatchPage() {
       });
     } finally {
       setPendingMatch(null);
+      setPendingInfo('No hay partidos pendientes guardados.');
     }
   };
 
@@ -355,6 +369,12 @@ export default function MatchPage() {
                   </button>
                 </div>
               </div>
+            </div>
+          )}
+
+          {!pendingMatch && pendingInfo && step === 1 && (
+            <div className="mb-4 bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-xs text-zinc-400">
+              {pendingInfo}
             </div>
           )}
 
