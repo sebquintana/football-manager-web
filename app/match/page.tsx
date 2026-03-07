@@ -321,6 +321,11 @@ export default function MatchPage() {
     else { const c = [...teamB]; c[index] = value; setTeamB(c); }
   };
 
+  const swapTeams = () => {
+    setTeamA(teamB);
+    setTeamB(teamA);
+  };
+
   // ---- step indicator ----
 
   const StepDot = ({ n, label }: { n: number; label: string }) => (
@@ -471,6 +476,16 @@ export default function MatchPage() {
                   Resultado del partido pendiente · podés modificar los equipos antes de confirmar
                 </div>
               )}
+
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={swapTeams}
+                  className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded-xl text-zinc-300 text-xs font-semibold transition-colors"
+                >
+                  Intercambiar A ↔ B
+                </button>
+              </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Team A */}
