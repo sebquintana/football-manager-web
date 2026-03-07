@@ -239,11 +239,9 @@ export default function MatchPage() {
       const saved: PendingMatch = await res.json();
       setPendingMatch(saved);
       setPendingInfo(null);
-      setStep(1);
       setSelected([]);
       setTeamOptions([]);
-      setMessage('Equipos guardados. Vas a poder cargar el resultado más tarde.');
-      setTimeout(() => setMessage(null), 5000);
+      loadIntoStep3(saved.teamANames, saved.teamBNames, saved.id);
     } catch {
       setMessage('No se pudieron guardar los equipos.');
       setTimeout(() => setMessage(null), 4000);
